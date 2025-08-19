@@ -27,6 +27,9 @@ Logger.default.setLogLevel('none');
 
 const Manage = React.lazy(() => import('./components/pages/Manage/Manage'));
 const Home = React.lazy(() => import('./components/pages/Home/Home'));
+
+const Listing = React.lazy(() => import('./components/pages/Listing/Listing'));
+
 const ManageANT = React.lazy(
   () => import('./components/pages/ManageANT/ManageANT'),
 );
@@ -333,6 +336,18 @@ function App() {
                 }
               >
                 <Checkout />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/listing"
+            element={
+              <Suspense
+                fallback={
+                  <PageLoader loading={true} message={'Loading, please wait'} />
+                }
+              >
+                <Listing />
               </Suspense>
             }
           />
