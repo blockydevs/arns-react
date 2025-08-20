@@ -25,6 +25,10 @@ import { useGlobalState } from './state';
 // set the log level of ar-io-sdk
 Logger.default.setLogLevel('none');
 
+const MyANTs = React.lazy(() => import('./components/pages/MyANTs/MyANTs'));
+const MyANTsDetails = React.lazy(
+  () => import('./components/pages/MyANTs/Details'),
+);
 const Manage = React.lazy(() => import('./components/pages/Manage/Manage'));
 const Home = React.lazy(() => import('./components/pages/Home/Home'));
 
@@ -348,6 +352,39 @@ function App() {
                 }
               >
                 <Listing />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/my-ants"
+            element={
+              <Suspense
+                fallback={
+                  <PageLoader loading={true} message={'Loading, please wait'} />
+                }
+              >
+                <MyANTs />
+              </Suspense>
+            }
+            // handle={{
+            //   crumbs: () => [
+            //     { name: 'Home', route: '/' },
+            //     {
+            //       name: 'My ANTs',
+            //       route: '/my-ants',
+            //     },
+            //   ],
+            // }}
+          />
+          <Route
+            path="/my-ants/:name"
+            element={
+              <Suspense
+                fallback={
+                  <PageLoader loading={true} message={'Loading, please wait'} />
+                }
+              >
+                <MyANTsDetails />
               </Suspense>
             }
           />
