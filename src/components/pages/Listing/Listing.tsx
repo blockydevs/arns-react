@@ -1,11 +1,17 @@
 import {
   ActiveListingTable,
+  Card,
   CompletedListingTable,
   type Domain,
-  MyANTsTable,
-  type OwnedDomain,
+  Header,
+  Pagination,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@blockydevs/arns-marketplace-ui';
 import { addDays, addHours, subDays, subHours } from 'date-fns';
+import { useState } from 'react';
 
 const now = new Date();
 const oneHour = addHours(now, 1);
@@ -105,45 +111,39 @@ const exampleData2: Domain[] = [
   },
 ];
 
-const exampleData3: OwnedDomain[] = [
-  {
-    name: 'BlockyDevs',
-    action: () => {
-      console.log('test');
-    },
-    endDate: oneHour.toISOString(),
-    price: { type: 'bid', symbol: 'ARIO', value: 1200 },
-    type: { value: 'english' },
-    status: 'idle',
-  },
-  {
-    name: 'DomainName',
-    action: () => {
-      console.log('test');
-    },
-    endDate: twoHour.toISOString(),
-    price: { type: 'buyout', symbol: 'ARIO', value: 300 },
-    type: { value: 'fixed-price' },
-    status: 'listed',
-  },
-  {
-    name: 'DomainName',
-    action: () => {
-      console.log('test');
-    },
-    endDate: twentyDays.toISOString(),
-    price: { type: 'buyout', symbol: 'ARIO', value: 140 },
-    type: { value: 'dutch' },
-    status: 'sold',
-  },
-];
-
 const Listing = () => {
+  const [index, setIndex] = useState(1);
   return (
-    <div className="flex flex-col gap-4 px-4">
-      <ActiveListingTable data={exampleData2} />
-      <CompletedListingTable data={exampleData} />
-      <MyANTsTable data={exampleData3} />
+    <div className="w-full px-8 arns-marketplace-ui">
+      <Header size="h1" className="my-12">
+        ArNS Marketplace
+      </Header>
+      <Tabs defaultValue="1">
+        <TabsList>
+          <TabsTrigger value="1">Active Listings</TabsTrigger>
+          <TabsTrigger value="2">Completed Listings</TabsTrigger>
+        </TabsList>
+        <TabsContent value="1">
+          <Card className="flex flex-col gap-8">
+            <ActiveListingTable data={exampleData2} />
+            <Pagination
+              totalPages={3}
+              activeIndex={index}
+              onPageChange={setIndex}
+            />
+          </Card>
+        </TabsContent>
+        <TabsContent value="2">
+          <Card className="flex flex-col gap-8">
+            <CompletedListingTable data={exampleData} />
+            <Pagination
+              totalPages={3}
+              activeIndex={index}
+              onPageChange={setIndex}
+            />
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
