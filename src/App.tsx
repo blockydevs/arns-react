@@ -1,4 +1,5 @@
 import { Logger } from '@ar.io/sdk/web';
+import '@blockydevs/arns-marketplace-ui/style.css';
 import * as Sentry from '@sentry/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -19,7 +20,6 @@ import NetworkSettings from './components/pages/Settings/NetworkSettings';
 import DevTools from './components/pages/Settings/devtools/DevTools';
 import useSyncSettings from './hooks/useSyncSettings/useSyncSettings';
 import useWanderEvents from './hooks/useWanderEvents/useWanderEvents';
-import './index.css';
 import { useGlobalState } from './state';
 
 // set the log level of ar-io-sdk
