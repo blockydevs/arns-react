@@ -114,7 +114,7 @@ const exampleData2: Domain[] = [
 const Listing = () => {
   const [index, setIndex] = useState(1);
   return (
-    <div className="w-full px-8 arns-marketplace-ui">
+    <div className="w-full px-8">
       <Header size="h1" className="my-12">
         ArNS Marketplace
       </Header>

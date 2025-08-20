@@ -1506,10 +1506,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blockydevs/arns-marketplace-ui@^0.1.47":
-  version "0.1.47"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.47.tgz#78c89bc0196d789d8f7387128eff2b17b52b1f60"
-  integrity sha512-479i4FGrrni+4RVcchBDaz6q/oLZBQ0+KT/w8WTYAppbo3ouot0EszMmga0RACtI6HyJc268USTx4yDDv9QbQg==
+"@blockydevs/arns-marketplace-ui@^0.1.54":
+  version "0.1.54"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.54.tgz#82bc180fd8a6039a0f78727da10d7d8bdc45fb81"
+  integrity sha512-K8ZZElOhBGxOdRTISk/tISFEuWwnmCszwjALt4S7yzp9305lSxlR7662jAxczT7tcC/Jv1EyEdvoBwgJ2B3GqQ==
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"
