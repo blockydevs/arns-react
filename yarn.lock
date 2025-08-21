@@ -129,24 +129,6 @@
     winston "^3.13.0"
     zod "^3.23.8"
 
-"@ar.io/sdk@^3.18.1":
-  version "3.18.1"
-  resolved "https://registry.yarnpkg.com/@ar.io/sdk/-/sdk-3.18.1.tgz#e76b541b2074b01162ee943c8b26a9acc472852e"
-  integrity sha512-28tEt0Vjj8phbeufRAXKY3SqceznxgiRw9zG3jh93FrAFWOUk8NqAAv4cq5S5Fv8seDyvVkv6hWD2epjlUqv+Q==
-  dependencies:
-    "@dha-team/arbundles" "^1.0.1"
-    "@permaweb/aoconnect" "0.0.68"
-    arweave "1.15.5"
-    axios "1.8.4"
-    axios-retry "^4.3.0"
-    commander "^12.1.0"
-    eventemitter3 "^5.0.1"
-    plimit-lit "^3.0.1"
-    prompts "^2.4.2"
-    uuid "^11.1.0"
-    winston "^3.13.0"
-    zod "^3.23.8"
-
 "@ar.io/wayfinder-core@1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ar.io/wayfinder-core/-/wayfinder-core-1.2.0.tgz#c119c80f468fd09a4e0a2e157a0850cc92cad507"
@@ -1524,18 +1506,17 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blockydevs/arns-marketplace-data@^0.1.16":
-  version "0.1.16"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.16.tgz#0629c1fe1844efd56f64158847b57f7d11f98160"
-  integrity sha512-LFmFsK3yqsvgjMDLjQ9gC3toIj4FHvAT39w0BVkPVbi8YyLgBPEkDie1gYyr3AyoE7yv66RFcgKwBVbXPzvvdA==
+"@blockydevs/arns-marketplace-data@^0.1.15":
+  version "0.1.15"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.15.tgz#b05495523eff5d363058be126671015429aa2e45"
+  integrity sha512-NqQby3++H9fXULbHnlD8UbMcPM81ms1e66SAXkdpBwAp6s3cZ8aZIuo25HXk4Zs01IEdZnBSaW5p0wBQ4mm/9w==
   dependencies:
-    "@ar.io/sdk" "^3.18.1"
     "@permaweb/aoconnect" "^0.0.87"
 
 "@blockydevs/arns-marketplace-ui@^0.1.63":
   version "0.1.63"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.63.tgz#1444380ced89a77c625c7a414b0f4841ff4d683e"
-  integrity sha512-9tQFW2QPOAXkQFDa8vzvJ59kYc3vXnpijd8wSpvdF965f3JkhS8la67ZkBlWIAa7ay8W8KRHiJ5doJG1FB3znQ==
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.63.tgz#0b564c643330df9482b7bdabe305e5218c8986be"
+  integrity sha512-+HFPLs3gtH4YgAfAJmYcwKxCTSYwQJFXqki3nrlUxYic21YQqZeEbwCf4s4ZlJ/pPu46vHtBWZU1u/QM+XkiLg==
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"
