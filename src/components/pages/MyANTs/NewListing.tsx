@@ -1,3 +1,4 @@
+// FIXME: refactor with proper form
 import {
   Button,
   Card,
@@ -17,11 +18,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 type Step = 1 | 2 | 3;
 
 function MyANTsNewListing() {
+  // MOCKED STATE BEFORE FORM INTEGRATION
   const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const { name } = useParams();
   const [type, setType] = useState<string>();
   const [price, setPrice] = useState<string>();
+  const [minimumPrice, setMinimumPrice] = useState<string>();
+  const [duration, setDuration] = useState<string>();
+  const [decrease, setDecrease] = useState<string>();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [time, setTime] = useState<string>('12:00:00');
@@ -69,10 +74,22 @@ function MyANTsNewListing() {
     { label: 'Fix price', value: 'fixed' },
   ];
 
+  const durationOptions: SelectOption[] = [
+    { label: '1 week', value: 'week' },
+    { label: '1 month', value: 'month' },
+    { label: 'Custom date', value: 'custom' },
+  ];
+
+  const decreaseOptions: SelectOption[] = [
+    { label: '1 hour', value: 'hour' },
+    { label: '12 hours', value: 'twentyHours' },
+    { label: '1 day', value: 'day' },
+  ];
+
   return (
     <>
       {renderProperGoBackHeader(step)}
-      <div className="w-full px-8 max-w-2xl mx-auto">
+      <div className="w-full px-8 max-w-2xl mx-auto pb-12">
         <Card className="flex flex-col gap-8">
           <Row label="Domain name" value={name} variant="large" />
           {step === 1 ? (
@@ -93,23 +110,25 @@ function MyANTsNewListing() {
                 suffix="ARIO"
                 type="number"
               />
-              <div className="flex flex-col">
-                <p className="text-white mb-0.5">Expiration time</p>
-                <p className="text-[var(--ar-color-neutral-500)] mb-4 text-sm">
-                  Leave unchecked to keep the listing active until sold or
-                  removed.
-                </p>
-                <CheckboxWithLabel
-                  label="Set expiration date"
-                  checked={checked}
-                  onCheckedChange={() => {
-                    setChecked((state) => !state);
-                    setTime('12:00:00');
-                    setDate(undefined);
-                  }}
-                />
-                {checked && (
-                  <div className="mt-6">
+              {type === 'dutch' ? (
+                <>
+                  <Input
+                    onChange={(e) => setMinimumPrice(e.target.value)}
+                    value={minimumPrice}
+                    label="Minimum price (floor)"
+                    suffix="ARIO"
+                    type="number"
+                  />
+                  <div className="flex flex-col gap-2">
+                    <Label>Duration</Label>
+                    <Select
+                      placeholder="Choose duration"
+                      className="w-full"
+                      onValueChange={(value) => setDuration(value)}
+                      options={durationOptions}
+                    />
+                  </div>
+                  {duration === 'custom' && (
                     <DatePicker
                       date={date}
                       open={open}
@@ -118,30 +137,127 @@ function MyANTsNewListing() {
                       time={time}
                       setTime={setTime}
                     />
+                  )}
+                  <div className="flex flex-col gap-2">
+                    <Label>Price decrease interval</Label>
+                    <Select
+                      placeholder="Choose decrease interval"
+                      className="w-full"
+                      onValueChange={(value) => setDecrease(value)}
+                      options={decreaseOptions}
+                    />
+                    <Button
+                      variant="link"
+                      size="small"
+                      className="inline-flex w-fit px-0"
+                    >
+                      View price schedule
+                    </Button>
                   </div>
-                )}
-              </div>
+                </>
+              ) : type === 'english' ? (
+                <>
+                  <div className="flex flex-col gap-2">
+                    <Label>Duration</Label>
+                    <Select
+                      placeholder="Choose duration"
+                      className="w-full"
+                      onValueChange={(value) => setDuration(value)}
+                      options={durationOptions}
+                    />
+                  </div>
+                  {duration === 'custom' && (
+                    <DatePicker
+                      date={date}
+                      open={open}
+                      setDate={setDate}
+                      setOpen={setOpen}
+                      time={time}
+                      setTime={setTime}
+                    />
+                  )}
+                </>
+              ) : (
+                <div className="flex flex-col">
+                  <p className="text-white mb-0.5">Expiration time</p>
+                  <p className="text-[var(--ar-color-neutral-500)] mb-4 text-sm">
+                    Leave unchecked to keep the listing active until sold or
+                    removed.
+                  </p>
+                  <CheckboxWithLabel
+                    label="Set expiration date"
+                    checked={checked}
+                    onCheckedChange={() => {
+                      setChecked((state) => !state);
+                      setTime('12:00:00');
+                      setDate(undefined);
+                    }}
+                  />
+                  {checked && (
+                    <div className="mt-6">
+                      <DatePicker
+                        date={date}
+                        open={open}
+                        setDate={setDate}
+                        setOpen={setOpen}
+                        time={time}
+                        setTime={setTime}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           ) : (
             <>
               <Row label="Type of listing" value={type} />
-              <Row label="Price" value={`${price} ARIO`} />
-              {checked ? (
-                <Row
-                  label="Expiration time"
-                  value={`${formatDate(date ?? '-', 'dd.MM.yyyy')} ${time}`}
-                />
+              <Row
+                label={type === 'english' ? 'Starting price' : 'Price'}
+                value={`${price} ARIO`}
+              />
+              {type === 'dutch' ? (
+                <>
+                  <Row
+                    label="Minimum price (Floor price)"
+                    value={`${minimumPrice} ARIO`}
+                  />
+                  <Row label="Duration" value={duration} />
+                  <Row
+                    label="Price decrease interval"
+                    value={`Every ${decrease}`}
+                  />
+                  <Button
+                    variant="link"
+                    size="small"
+                    className="inline-flex w-fit px-0"
+                  >
+                    View price schedule
+                  </Button>
+                </>
+              ) : type === 'english' ? (
+                <>
+                  <Row label="Duration" value={duration} />
+                </>
               ) : (
-                <Row
-                  label="Expiration time"
-                  value="No time limit"
-                  desc="Listing remains active until sold or removed"
-                />
+                <>
+                  {checked ? (
+                    <Row
+                      label="Expiration time"
+                      value={`${formatDate(date ?? '-', 'dd.MM.yyyy')} ${time}`}
+                    />
+                  ) : (
+                    <Row
+                      label="Expiration time"
+                      value="No time limit"
+                      desc="Listing remains active until sold or removed"
+                    />
+                  )}
+                </>
               )}
             </>
           )}
 
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end mt-4">
             {step !== 3 ? (
               <>
                 <Button
