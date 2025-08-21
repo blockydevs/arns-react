@@ -26,8 +26,8 @@ import { useGlobalState } from './state';
 Logger.default.setLogLevel('none');
 
 const MyANTs = React.lazy(() => import('./components/pages/MyANTs/MyANTs'));
-const MyANTsDetails = React.lazy(
-  () => import('./components/pages/MyANTs/Details'),
+const MyANTsNewListing = React.lazy(
+  () => import('./components/pages/MyANTs/NewListing'),
 );
 const Manage = React.lazy(() => import('./components/pages/Manage/Manage'));
 const Home = React.lazy(() => import('./components/pages/Home/Home'));
@@ -377,14 +377,14 @@ function App() {
             // }}
           />
           <Route
-            path="/my-ants/:name"
+            path="/my-ants/new-listing/:name"
             element={
               <Suspense
                 fallback={
                   <PageLoader loading={true} message={'Loading, please wait'} />
                 }
               >
-                <MyANTsDetails />
+                <MyANTsNewListing />
               </Suspense>
             }
           />

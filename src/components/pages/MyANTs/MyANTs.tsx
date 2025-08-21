@@ -18,7 +18,7 @@ const MyANTs = () => {
     {
       name: 'BlockyDevs',
       action: () => {
-        navigate(`/my-ants/blockydevs`);
+        navigate(`/my-ants/new-listing/blockydevs`);
       },
       endDate: oneHour.toISOString(),
       price: { type: 'bid', symbol: 'ARIO', value: 1200 },
