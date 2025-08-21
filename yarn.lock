@@ -1508,8 +1508,8 @@
 
 "@blockydevs/arns-marketplace-data@^0.1.15":
   version "0.1.15"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.15.tgz#4a2116148c20cc054c7d116e269eddcacf5348cc"
-  integrity sha512-ghqRgPY03O7WVGAnkEuXpNcfq0rWKqHxTrNDJpnidcepmandS+hYgsoqc76/qP7lEzmbTJEoTAI7Gm8JlZAbPA==
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.15.tgz#b05495523eff5d363058be126671015429aa2e45"
+  integrity sha512-NqQby3++H9fXULbHnlD8UbMcPM81ms1e66SAXkdpBwAp6s3cZ8aZIuo25HXk4Zs01IEdZnBSaW5p0wBQ4mm/9w==
   dependencies:
     "@permaweb/aoconnect" "^0.0.87"
 
