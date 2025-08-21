@@ -99,6 +99,7 @@ function MyANTsNewListing() {
                 <Select
                   placeholder="Type of listing"
                   className="w-full"
+                  defaultValue={type}
                   onValueChange={(value) => setType(value)}
                   options={options}
                 />
