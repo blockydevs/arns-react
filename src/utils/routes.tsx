@@ -1,5 +1,5 @@
 import RNPPage from '@src/components/pages/RNPPage/RNPPage';
-import { Bolt, Gavel } from 'lucide-react';
+import { Bolt, CalendarRange, Gavel } from 'lucide-react';
 
 import { Home, Listing, Manage } from '../components/pages';
 
@@ -10,6 +10,12 @@ const WrappedGavelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
 
 const WrappedBoltIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
   return <Bolt {...props} />;
+};
+
+const WrapperCalendarRangeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
+  props,
+) => {
+  return <CalendarRange {...props} />;
 };
 
 export type Route = {
@@ -40,7 +46,7 @@ export const ROUTES: { [x: string]: Route } = {
   },
   listing: {
     text: 'Listing',
-    icon: WrappedGavelIcon,
+    icon: WrapperCalendarRangeIcon,
     path: '/listing',
     component: Listing,
     protected: false,
