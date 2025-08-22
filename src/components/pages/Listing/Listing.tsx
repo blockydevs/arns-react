@@ -12,6 +12,7 @@ import {
 } from '@blockydevs/arns-marketplace-ui';
 import { addDays, addHours, subDays, subHours } from 'date-fns';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const now = new Date();
 const oneHour = addHours(now, 1);
@@ -22,97 +23,99 @@ const oneHourAgo = subHours(now, 1);
 const twoDaysAgo = subDays(now, 2);
 const twentyDaysAgo = subDays(now, 20);
 
-const exampleData: Domain[] = [
-  {
-    name: 'BlockyDevs',
-    action: () => {
-      console.log('test');
-    },
-    createdAt: oneHourAgo.toISOString(),
-    endDate: oneHour.toISOString(),
-    price: { type: 'bid', symbol: 'ARIO', value: 1200 },
-    type: { value: 'english' },
-  },
-  {
-    name: 'DomainName',
-    action: () => {
-      console.log('test');
-    },
-    createdAt: twoDaysAgo.toISOString(),
-    endDate: twoHour.toISOString(),
-    price: { type: 'buyout', symbol: 'ARIO', value: 300 },
-    type: { value: 'fixed-price' },
-  },
-  {
-    name: 'DomainName',
-    action: () => {
-      console.log('test');
-    },
-    createdAt: twentyDaysAgo.toISOString(),
-    endDate: twentyDays.toISOString(),
-    price: { type: 'buyout', symbol: 'ARIO', value: 140 },
-    type: { value: 'dutch' },
-  },
-];
-
-const exampleData2: Domain[] = [
-  {
-    name: 'BlockyDevs',
-    action: () => {
-      console.log('test');
-    },
-    endDate: oneHour.toISOString(),
-    price: { type: 'bid', symbol: 'ARIO', value: 1200 },
-    type: { value: 'english' },
-  },
-  {
-    name: 'DomainName',
-    action: () => {
-      console.log('test');
-    },
-    endDate: twoHour.toISOString(),
-    price: { type: 'buyout', symbol: 'ARIO', value: 300 },
-    type: { value: 'fixed-price' },
-  },
-  {
-    name: 'DomainName',
-    action: () => {
-      console.log('test');
-    },
-    endDate: twentyDays.toISOString(),
-    price: { type: 'buyout', symbol: 'ARIO', value: 140 },
-    type: { value: 'dutch' },
-  },
-  {
-    name: 'DomainName',
-    action: () => {
-      console.log('test');
-    },
-    endDate: twentyDays.toISOString(),
-    price: { type: 'buyout', symbol: 'ARIO', value: 300 },
-    type: {
-      value: 'dutch',
-      label: 'Special dutch auction',
-      highlightColor: 'gold',
-    },
-  },
-  {
-    name: 'VeryLongDomainNameButItsVeryVeryVeryVeryVeeeeeeeeryLong',
-    action: () => {
-      console.log('test');
-    },
-    endDate: twentyDays.toISOString(),
-    price: { type: 'buyout', symbol: 'ARIO', value: 140 },
-    type: {
-      value: 'fixed-price',
-      label: 'Fixed price 1.0',
-      highlightColor: 'turquoise',
-    },
-  },
-];
-
 const Listing = () => {
   const [index, setIndex] = useState(1);
+  const navigate = useNavigate();
+
+  const exampleData2: Domain[] = [
+    {
+      name: 'BlockyDevs',
+      action: () => {
+        navigate('/listing/blockydevs');
+      },
+      endDate: oneHour.toISOString(),
+      price: { type: 'bid', symbol: 'ARIO', value: 1200 },
+      type: { value: 'english' },
+    },
+    {
+      name: 'DomainName',
+      action: () => {
+        console.log('test');
+      },
+      endDate: twoHour.toISOString(),
+      price: { type: 'buyout', symbol: 'ARIO', value: 300 },
+      type: { value: 'fixed-price' },
+    },
+    {
+      name: 'DomainName',
+      action: () => {
+        console.log('test');
+      },
+      endDate: twentyDays.toISOString(),
+      price: { type: 'buyout', symbol: 'ARIO', value: 140 },
+      type: { value: 'dutch' },
+    },
+    {
+      name: 'DomainName',
+      action: () => {
+        console.log('test');
+      },
+      endDate: twentyDays.toISOString(),
+      price: { type: 'buyout', symbol: 'ARIO', value: 300 },
+      type: {
+        value: 'dutch',
+        label: 'Special dutch auction',
+        highlightColor: 'gold',
+      },
+    },
+    {
+      name: 'VeryLongDomainNameButItsVeryVeryVeryVeryVeeeeeeeeryLong',
+      action: () => {
+        console.log('test');
+      },
+      endDate: twentyDays.toISOString(),
+      price: { type: 'buyout', symbol: 'ARIO', value: 140 },
+      type: {
+        value: 'fixed-price',
+        label: 'Fixed price 1.0',
+        highlightColor: 'turquoise',
+      },
+    },
+  ];
+
+  const exampleData: Domain[] = [
+    {
+      name: 'BlockyDevs',
+      action: () => {
+        navigate('/listing/blockydevs');
+      },
+      createdAt: oneHourAgo.toISOString(),
+      endDate: oneHour.toISOString(),
+      price: { type: 'bid', symbol: 'ARIO', value: 1200 },
+      type: { value: 'english' },
+    },
+    {
+      name: 'DomainName',
+      action: () => {
+        console.log('test');
+      },
+      createdAt: twoDaysAgo.toISOString(),
+      endDate: twoHour.toISOString(),
+      price: { type: 'buyout', symbol: 'ARIO', value: 300 },
+      type: { value: 'fixed-price' },
+    },
+    {
+      name: 'DomainName',
+      action: () => {
+        console.log('test');
+      },
+      createdAt: twentyDaysAgo.toISOString(),
+      endDate: twentyDays.toISOString(),
+      price: { type: 'buyout', symbol: 'ARIO', value: 140 },
+      type: { value: 'dutch' },
+    },
+  ];
+
   return (
     <div className="w-full px-8">
       <Header size="h1" className="my-12">

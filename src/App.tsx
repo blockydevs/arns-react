@@ -33,6 +33,7 @@ const Manage = React.lazy(() => import('./components/pages/Manage/Manage'));
 const Home = React.lazy(() => import('./components/pages/Home/Home'));
 
 const Listing = React.lazy(() => import('./components/pages/Listing/Listing'));
+const Details = React.lazy(() => import('./components/pages/Listing/Details'));
 
 const ManageANT = React.lazy(
   () => import('./components/pages/ManageANT/ManageANT'),
@@ -352,6 +353,18 @@ function App() {
                 }
               >
                 <Listing />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/listing/:name"
+            element={
+              <Suspense
+                fallback={
+                  <PageLoader loading={true} message={'Loading, please wait'} />
+                }
+              >
+                <Details />
               </Suspense>
             }
           />
