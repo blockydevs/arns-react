@@ -15,6 +15,8 @@ import { formatDate } from 'date-fns';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { PriceScheduleModal } from './PriceScheduleModal';
+
 type Step = 1 | 2 | 3;
 
 function MyANTsNewListing() {
@@ -147,13 +149,7 @@ function MyANTsNewListing() {
                       onValueChange={(value) => setDecrease(value)}
                       options={decreaseOptions}
                     />
-                    <Button
-                      variant="link"
-                      size="small"
-                      className="inline-flex w-fit px-0"
-                    >
-                      View price schedule
-                    </Button>
+                    <PriceScheduleModal date="" interval="" />
                   </div>
                 </>
               ) : type === 'english' ? (
