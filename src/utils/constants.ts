@@ -1,5 +1,6 @@
 import {
   ANT_LUA_ID,
+  ANT_REGISTRY_ID,
   ARIO_TESTNET_PROCESS_ID,
   DEFAULT_SCHEDULER_ID,
 } from '@ar.io/sdk/web';
@@ -53,7 +54,8 @@ export const TRAILING_DASH_UNDERSCORE_REGEX = new RegExp('^[-_]|[-_]$');
 // note: lookahead/lookbehind regex's are not compatible with iOS browsers
 
 export const MAX_ARNS_NAME_LENGTH = 51;
-export const MAX_UNDERNAME_LENGTH = 61;
+export const MAX_FULL_ARNS_NAME_LENGTH = 61;
+export const MAX_UNDERNAME_LENGTH = MAX_FULL_ARNS_NAME_LENGTH - 2; // a_ is the shortest base name with _
 export const ARNS_NAME_REGEX = new RegExp(
   `^([a-zA-Z0-9][a-zA-Z0-9-]{0,${
     MAX_ARNS_NAME_LENGTH - 2
@@ -63,9 +65,8 @@ export const ARNS_NAME_REGEX_PARTIAL = new RegExp(
   `^[a-zA-Z0-9-]{0,${MAX_ARNS_NAME_LENGTH}}$`,
 );
 export const UNDERNAME_REGEX = new RegExp(
-  `^([a-zA-Z0-9][a-zA-Z0-9_-]{0,${
-    MAX_UNDERNAME_LENGTH - 2
-  }}[a-zA-Z0-9]|[a-zA-Z0-9]{1})$`,
+  // one alphanumeric character, any amount of alphanumeric or underscores or dashes, and then one alphanumeric character
+  `^[A-Za-z0-9](?:[A-Za-z0-9_\\-]{0,${MAX_UNDERNAME_LENGTH - 2}}[A-Za-z0-9])?$`,
 );
 
 export const KEYWORD_REGEX = new RegExp('^[a-zA-Z0-9\\-_@#s+]{1,32}$');
@@ -93,6 +94,14 @@ export const URL_REGEX = new RegExp(
 );
 export const ARIO_PROCESS_ID =
   import.meta.env.VITE_ARIO_PROCESS_ID || ARIO_TESTNET_PROCESS_ID;
+
+// TODO: export this from the sdk
+export const ANT_REGISTRY_TESTNET_PROCESS_ID =
+  'RR0vheYqtsKuJCWh6xj0beE35tjaEug5cejMw9n2aa8';
+export const ANT_REGISTRY_PROCESS_ID =
+  import.meta.env.VITE_NODE_ENV == 'production'
+    ? ANT_REGISTRY_ID
+    : ANT_REGISTRY_TESTNET_PROCESS_ID;
 
 export const DEFAULT_ANT_LUA_ID = ANT_LUA_ID;
 

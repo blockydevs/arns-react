@@ -18,7 +18,8 @@ import './styles.css';
 
 function Manage() {
   const navigate = useNavigate();
-  const [{ arioProcessId, aoNetwork, hyperbeamUrl }] = useGlobalState();
+  const [{ arioProcessId, aoNetwork, hyperbeamUrl, antRegistryProcessId }] =
+    useGlobalState();
   const [{ loading: loadingArnsState, domains, ants }, dispatchArNSState] =
     useArNSState();
   const { data: antVersion } = useLatestANTVersion();
@@ -28,7 +29,7 @@ function Manage() {
   const [search, setSearch] = useState<string>('');
 
   return (
-    <div className="overflow-auto px-[100px] pb-[30px] pt-[10px]">
+    <div className="overflow-auto px-4 md:px-[100px] pb-[30px] pt-[10px]">
       <div className="flex flex-col gap-[10px]">
         <div className="flex justify-between items-center">
           <h1
@@ -43,7 +44,7 @@ function Manage() {
           </h1>
           <button
             onClick={() => navigate('/')}
-            className="whitespace-nowrap rounded-[4px] bg-primary px-4 py-2 text-sm text-black font-medium transition-all hover:bg-primary-dark hover:scale-105"
+            className="whitespace-nowrap rounded-[4px] hidden md:block bg-primary px-4 py-2 text-sm text-black font-medium transition-all hover:bg-primary-dark hover:scale-105"
           >
             Register a Name
           </button>
@@ -111,6 +112,7 @@ function Manage() {
                           dispatch: dispatchArNSState,
                           walletAddress: walletAddress,
                           arioProcessId,
+                          antRegistryProcessId,
                           aoNetworkSettings: aoNetwork,
                           hyperbeamUrl,
                         })
