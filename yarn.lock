@@ -1513,10 +1513,10 @@
   dependencies:
     "@permaweb/aoconnect" "^0.0.87"
 
-"@blockydevs/arns-marketplace-ui@^0.1.69":
-  version "0.1.69"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.69.tgz#0f14e7607c3644e67755774c899d1ac4965bebdb"
-  integrity sha512-qsiw51f/1r4il0RGhqpG0RvErYEZ2HcmbJT6Uz1C/joC4+9T7zOWyzJlCs90AG9i6UEMvYUL0nKvazVkIc51pw==
+"@blockydevs/arns-marketplace-ui@^0.1.73":
+  version "0.1.73"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.73.tgz#25f8b100cccd2c2e2cebf12866f9b882b6e225d5"
+  integrity sha512-b1zoiYcHBDONn/UAmZNXxSUltPG8eZvwAiJtwpujxmY/7YF7uah67vCtgI3OPPHET5+PlK4l3M85iStvJTt4Jg==
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"
