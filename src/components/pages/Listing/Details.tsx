@@ -9,15 +9,17 @@ import {
   Input,
   Paragraph,
   Row,
+  calculateDecreaseSchedule,
 } from '@blockydevs/arns-marketplace-ui';
 import { BLOCKYDEVS_ACTIVITY_PROCESS_ID } from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { PriceScheduleModal } from '../MyANTs/PriceScheduleModal';
 
 const Details = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const queryDetails = useQuery({
     enabled: !!id,
@@ -84,13 +86,13 @@ const Details = () => {
               Price decrease schedule
             </Paragraph>
             <DecreaseScheduleTable
-              data={[
-                { date: '14-07-2025 14:00', price: 500 },
-                { date: '15-07-2025 14:00', price: 400 },
-                { date: '16-07-2025 14:00', price: 300 },
-                { date: '17-07-2025 14:00', price: 200 },
-                { date: '18-07-2025 14:00', price: 100 },
-              ]}
+              data={calculateDecreaseSchedule(
+                '2025-08-26T00:00:00',
+                '2025-08-28T00:00:00',
+                400,
+                '12hours',
+                700,
+              )}
             />
           </Card>
         )}
@@ -112,9 +114,22 @@ const Details = () => {
               <Paragraph>Starting price: 300 ARIO</Paragraph>
               <Paragraph>Floor price: 80 ARIO</Paragraph>
               <Paragraph>Price decrease: every 24 hours</Paragraph>
-              <PriceScheduleModal date="" interval="" />
+              <PriceScheduleModal
+                basePrice={700}
+                floorPrice={400}
+                date="2025-08-28T00:00:00"
+                interval="12hours"
+              />
               {!isSold && (
-                <Button variant="primary" className="w-full">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => {
+                    navigate(
+                      `/listing/${name}/confirm-purchase?price=${queryDetails.data.price}&type=dutch`,
+                    );
+                  }}
+                >
                   Buy now
                 </Button>
               )}
@@ -142,7 +157,15 @@ const Details = () => {
                     suffix="ARIO"
                     type="number"
                   />
-                  <Button variant="primary" className="w-full">
+                  <Button
+                    variant="primary"
+                    className="w-full"
+                    onClick={() => {
+                      navigate(
+                        `/listing/${name}/confirm-purchase?price=${queryDetails.data.price}&type=english`,
+                      );
+                    }}
+                  >
                     Place bid
                   </Button>
                 </>
@@ -151,7 +174,15 @@ const Details = () => {
           ) : (
             <>
               {!isSold && (
-                <Button variant="primary" className="w-full">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => {
+                    navigate(
+                      `/listing/${name}/confirm-purchase?price=${queryDetails.data.price}&type=fixed`,
+                    );
+                  }}
+                >
                   Buy now
                 </Button>
               )}
