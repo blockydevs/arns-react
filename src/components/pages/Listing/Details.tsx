@@ -11,7 +11,7 @@ import {
   Row,
 } from '@blockydevs/arns-marketplace-ui';
 import { ExternalLink } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { PriceScheduleModal } from '../MyANTs/PriceScheduleModal';
 
@@ -22,6 +22,7 @@ const PRICE = 123123;
 const OWNER = false;
 
 const Details = () => {
+  const navigate = useNavigate();
   const { name } = useParams();
 
   return (
@@ -89,7 +90,15 @@ const Details = () => {
               <Paragraph>Price decrease: every 24 hours</Paragraph>
               <PriceScheduleModal date="" interval="" />
               {!SOLD && (
-                <Button variant="primary" className="w-full">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => {
+                    navigate(
+                      `/listing/${name}/confirm-purchase?price=${PRICE}&type=dutch`,
+                    );
+                  }}
+                >
                   Buy now
                 </Button>
               )}
@@ -117,7 +126,15 @@ const Details = () => {
                     suffix="ARIO"
                     type="number"
                   />
-                  <Button variant="primary" className="w-full">
+                  <Button
+                    variant="primary"
+                    className="w-full"
+                    onClick={() => {
+                      navigate(
+                        `/listing/${name}/confirm-purchase?price=${PRICE}&type=english`,
+                      );
+                    }}
+                  >
                     Place bid
                   </Button>
                 </>
@@ -126,7 +143,15 @@ const Details = () => {
           ) : (
             <>
               {!SOLD && (
-                <Button variant="primary" className="w-full">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => {
+                    navigate(
+                      `/listing/${name}/confirm-purchase?price=${PRICE}&type=fixed`,
+                    );
+                  }}
+                >
                   Buy now
                 </Button>
               )}
