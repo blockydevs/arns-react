@@ -357,7 +357,7 @@ function App() {
             }
           />
           <Route
-            path="/listing/:name"
+            path="/listing/:id"
             element={
               <Suspense
                 fallback={

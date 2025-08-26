@@ -1,51 +1,62 @@
+import { ARIO_TESTNET_PROCESS_ID } from '@ar.io/sdk';
+import { fetchMyANTs } from '@blockydevs/arns-marketplace-data';
 import {
   Card,
   Header,
   MyANTsTable,
   OwnedDomain,
 } from '@blockydevs/arns-marketplace-ui';
-import { addDays, addHours } from 'date-fns';
+import { useGlobalState, useWalletState } from '@src/state';
+import { BLOCKYDEVS_ACTIVITY_PROCESS_ID } from '@src/utils/constants';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-
-const now = new Date();
-const oneHour = addHours(now, 1);
-const twoHour = addHours(now, 2);
-const twentyDays = addDays(now, 20);
 
 const MyANTs = () => {
   const navigate = useNavigate();
-  const exampleData3: OwnedDomain[] = [
-    {
-      name: 'BlockyDevs',
-      action: () => {
-        navigate(`/my-ants/new-listing/blockydevs`);
-      },
-      endDate: oneHour.toISOString(),
-      price: { type: 'bid', symbol: 'ARIO', value: 1200 },
-      type: { value: 'english' },
-      status: 'idle',
+
+  const [{ aoClient }] = useGlobalState();
+  const [{ walletAddress }] = useWalletState();
+
+  const queryMyANTs = useQuery({
+    enabled: !!walletAddress,
+    queryKey: ['my-ants', walletAddress],
+    queryFn: () => {
+      if (!walletAddress) throw new Error('No wallet address');
+
+      return fetchMyANTs({
+        walletAddress: walletAddress.toString(),
+        ao: aoClient,
+        networkProcessId: ARIO_TESTNET_PROCESS_ID,
+        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+      });
     },
-    {
-      name: 'DomainName',
-      action: () => {
-        console.log('test');
-      },
-      endDate: twoHour.toISOString(),
-      price: { type: 'buyout', symbol: 'ARIO', value: 300 },
-      type: { value: 'fixed-price' },
-      status: 'listed',
+    select: (data) => {
+      return Object.values(data).map(
+        (domain): OwnedDomain => ({
+          name: domain.name,
+          action: () => {
+            navigate(`/my-ants/new-listing/${domain.name}`);
+          },
+          endDate: undefined,
+          price: undefined,
+          type: undefined,
+          status: 'idle',
+        }),
+      );
     },
-    {
-      name: 'DomainName',
-      action: () => {
-        console.log('test');
-      },
-      endDate: twentyDays.toISOString(),
-      price: { type: 'buyout', symbol: 'ARIO', value: 140 },
-      type: { value: 'dutch' },
-      status: 'sold',
-    },
-  ];
+  });
+
+  console.log(queryMyANTs.data);
+
+  if (queryMyANTs.isPending) {
+    return <p className="text-white text-center">loading...</p>;
+  }
+
+  if (queryMyANTs.error) {
+    return (
+      <p className="text-error text-center">{queryMyANTs.error.message}</p>
+    );
+  }
 
   return (
     <div className="w-full px-8">
@@ -53,7 +64,7 @@ const MyANTs = () => {
         My ANTs
       </Header>
       <Card>
-        <MyANTsTable data={exampleData3} />
+        <MyANTsTable data={queryMyANTs.data} />
       </Card>
     </div>
   );
