@@ -1,4 +1,5 @@
 // FIXME: refactor with proper form
+import { createListing } from '@blockydevs/arns-marketplace-data';
 import {
   Button,
   Card,
@@ -12,9 +13,15 @@ import {
   Select,
   SelectOption,
 } from '@blockydevs/arns-marketplace-ui';
+import { useGlobalState, useWalletState } from '@src/state';
+import {
+  BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
+  BLOCKYDEVS_SWAP_TOKEN_ID,
+} from '@src/utils/constants';
+import { useMutation } from '@tanstack/react-query';
 import { formatDate } from 'date-fns';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { PriceScheduleModal } from './PriceScheduleModal';
 
@@ -24,7 +31,8 @@ function MyANTsNewListing() {
   // MOCKED STATE BEFORE FORM INTEGRATION
   const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const { name } = useParams();
+  const { antProcessId } = useParams();
+  const [searchParams] = useSearchParams();
   const [type, setType] = useState<string>();
   const [price, setPrice] = useState<string>();
   const [minimumPrice, setMinimumPrice] = useState<string>();
@@ -34,6 +42,101 @@ function MyANTsNewListing() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [time, setTime] = useState<string>('12:00:00');
   const [checked, setChecked] = useState(false);
+
+  const [{ antAoClient }] = useGlobalState();
+  const [{ wallet, walletAddress }] = useWalletState();
+
+  const name = searchParams.get('name') ?? '-';
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (!wallet || !walletAddress) {
+        throw new Error('No wallet connected');
+      }
+
+      if (!wallet.contractSigner) {
+        throw new Error('No wallet signer available');
+      }
+
+      if (!antProcessId) {
+        throw new Error('antProcessId is missing');
+      }
+
+      if (!price) {
+        throw new Error('No price specified');
+      }
+
+      if (!type) {
+        throw new Error('No type specified');
+      }
+
+      const oneHourMs = 3600 * 1000;
+      const oneDayMs = 24 * 3600 * 1000;
+
+      await createListing({
+        ao: antAoClient,
+        antProcessId,
+        marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
+        swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
+        config: (() => {
+          switch (type) {
+            case 'fixed': {
+              return {
+                type,
+                price: price.toString(),
+                // FIXME:
+                expiresAt: Date.now() + oneDayMs,
+              };
+            }
+            case 'dutch': {
+              if (!minimumPrice) {
+                throw new Error('minimum price is missing');
+              }
+
+              if (!decrease) {
+                throw new Error('decrease interval is missing');
+              }
+
+              const decreaseIntervalMs = (() => {
+                if (decrease === '1hour') return oneHourMs;
+                if (decrease === '12hours') return 12 * oneHourMs;
+                if (decrease === 'day') return 24 * oneHourMs;
+                if (decrease === 'week') return 7 * 24 * oneHourMs;
+                throw new Error(`Unsupported decrease value ${decrease}`);
+              })();
+
+              const durationMs = (() => {
+                if (duration === 'week') return 7 * oneDayMs;
+                if (duration === 'month') return 30 * oneDayMs;
+                throw new Error(`Unsupported duration value ${duration}`);
+              })();
+
+              return {
+                type,
+                expiresAt: Date.now() + durationMs,
+                price: price.toString(),
+                minimumPrice,
+                decreaseInterval: decreaseIntervalMs.toString(),
+              };
+            }
+            case 'english': {
+              return {
+                type,
+                price: price.toString(),
+                // FIXME:
+                expiresAt: Date.now() + oneDayMs,
+              };
+            }
+            default: {
+              throw new Error(`Unsupported listing type ${type}`);
+            }
+          }
+        })(),
+        walletAddress: walletAddress.toString(),
+        signer: wallet.contractSigner,
+      });
+    },
+  });
 
   const renderProperGoBackHeader = (step: Step) => {
     switch (step) {
@@ -280,8 +383,15 @@ function MyANTsNewListing() {
                   onClick={() => {
                     if (step === 1) setStep(2);
                     else {
-                      // TODO: add mutate on step 2
-                      setStep(3);
+                      mutation.mutate(undefined, {
+                        onError: (error) => {
+                          console.error(error);
+                          window.alert(error.message);
+                        },
+                        onSuccess: () => {
+                          setStep(3);
+                        },
+                      });
                     }
                   }}
                 >

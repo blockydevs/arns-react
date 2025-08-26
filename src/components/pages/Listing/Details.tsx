@@ -126,7 +126,7 @@ const Details = () => {
                   className="w-full"
                   onClick={() => {
                     navigate(
-                      `/listing/${name}/confirm-purchase?price=${queryDetails.data.price}&type=dutch`,
+                      `/listing/${queryDetails.data.orderId}/confirm-purchase?price=${queryDetails.data.price}&type=dutch`,
                     );
                   }}
                 >
@@ -179,7 +179,7 @@ const Details = () => {
                   className="w-full"
                   onClick={() => {
                     navigate(
-                      `/listing/${name}/confirm-purchase?price=${queryDetails.data.price}&type=fixed`,
+                      `/listing/${queryDetails.data.orderId}/confirm-purchase?price=${queryDetails.data.price}&type=fixed`,
                     );
                   }}
                 >
