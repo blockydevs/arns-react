@@ -6,13 +6,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Interval,
+  calculateDecreaseSchedule,
 } from '@blockydevs/arns-marketplace-ui';
 
 interface Props {
   date: string;
-  interval: string;
+  interval: Interval;
+  floorPrice: number;
+  basePrice: number;
 }
-export const PriceScheduleModal: React.FC<Props> = ({ date, interval }) => {
+export const PriceScheduleModal: React.FC<Props> = ({
+  date,
+  interval,
+  floorPrice,
+  basePrice,
+}) => {
   return (
     <Dialog>
       <form>
@@ -31,15 +40,14 @@ export const PriceScheduleModal: React.FC<Props> = ({ date, interval }) => {
               Price decrease schedule
             </DialogTitle>
           </DialogHeader>
-          {interval} {date}
           <DecreaseScheduleTable
-            data={[
-              { date: '14-07-2025 14:00', price: 500 },
-              { date: '15-07-2025 14:00', price: 400 },
-              { date: '16-07-2025 14:00', price: 300 },
-              { date: '17-07-2025 14:00', price: 200 },
-              { date: '18-07-2025 14:00', price: 100 },
-            ]}
+            data={calculateDecreaseSchedule(
+              new Date().toString(),
+              date,
+              floorPrice,
+              interval,
+              basePrice,
+            )}
           />
         </DialogContent>
       </form>
