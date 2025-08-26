@@ -35,7 +35,9 @@ const MyANTs = () => {
         (domain): OwnedDomain => ({
           name: domain.name,
           action: () => {
-            navigate(`/my-ants/new-listing/${domain.name}`);
+            navigate(
+              `/my-ants/new-listing/${domain.processId}?name=${domain.name}`,
+            );
           },
           endDate: undefined,
           price: undefined,

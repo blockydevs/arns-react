@@ -403,7 +403,7 @@ function App() {
             // }}
           />
           <Route
-            path="/my-ants/new-listing/:name"
+            path="/my-ants/new-listing/:antProcessId"
             element={
               <Suspense
                 fallback={
