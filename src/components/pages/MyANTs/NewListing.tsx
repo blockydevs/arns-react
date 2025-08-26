@@ -6,6 +6,7 @@ import {
   DatePicker,
   GoBackHeader,
   Input,
+  Interval,
   Label,
   Row,
   Select,
@@ -83,9 +84,10 @@ function MyANTsNewListing() {
   ];
 
   const decreaseOptions: SelectOption[] = [
-    { label: '1 hour', value: 'hour' },
-    { label: '12 hours', value: 'twentyHours' },
+    { label: '1 hour', value: '1hour' },
+    { label: '12 hours', value: '12hours' },
     { label: '1 day', value: 'day' },
+    { label: 'week', value: 'week' },
   ];
 
   return (
@@ -149,7 +151,12 @@ function MyANTsNewListing() {
                       onValueChange={(value) => setDecrease(value)}
                       options={decreaseOptions}
                     />
-                    <PriceScheduleModal date="" interval="" />
+                    <PriceScheduleModal
+                      basePrice={Number(price)}
+                      floorPrice={Number(minimumPrice)}
+                      date="2025-08-28T00:00:00"
+                      interval={decrease as Interval}
+                    />
                   </div>
                 </>
               ) : type === 'english' ? (
