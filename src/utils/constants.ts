@@ -259,3 +259,6 @@ export const currencyLabels: Partial<Record<TokenType, string>> = {
 
 export const LINK_HOW_ARE_CONVERSIONS_DETERMINED =
   'https://help.ardrive.io/hc/en-us/articles/17043397992731';
+
+export const BLOCKYDEVS_ACTIVITY_PROCESS_ID =
+  'QALO2OogDmCA4j444avH_83UNAFbpYAq8zO3dqizueU';
