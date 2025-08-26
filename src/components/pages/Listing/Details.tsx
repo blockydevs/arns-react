@@ -13,37 +13,13 @@ import {
 import { BLOCKYDEVS_ACTIVITY_PROCESS_ID } from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { PriceScheduleModal } from '../MyANTs/PriceScheduleModal';
 
 const Details = () => {
-  const { id } = useParams();
-  const queryDetails = useQuery({
-    enabled: !!id,
-    queryKey: ['listings', 'details', id],
-    queryFn: () => {
-      if (!id) throw new Error('No id provided');
-
-      return fetchListingDetails({
-        orderId: id,
-        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
-      });
-    },
-  });
-
-  if (queryDetails.isPending) {
-    return <p className="text-white text-center">loading...</p>;
-  }
-
-  if (queryDetails.error) {
-    return (
-      <p className="text-error text-center">{queryDetails.error.message}</p>
-    );
-  }
-
-  const isOwner = false;
-  const isSold = false;
+  const navigate = useNavigate();
+  const { name } = useParams();
 
   return (
     <div className="max-w-6xl w-full px-6 mx-auto grid md:grid-cols-5 gap-6 py-12">
@@ -113,8 +89,16 @@ const Details = () => {
               <Paragraph>Floor price: 80 ARIO</Paragraph>
               <Paragraph>Price decrease: every 24 hours</Paragraph>
               <PriceScheduleModal date="" interval="" />
-              {!isSold && (
-                <Button variant="primary" className="w-full">
+              {!SOLD && (
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => {
+                    navigate(
+                      `/listing/${name}/confirm-purchase?price=${PRICE}&type=dutch`,
+                    );
+                  }}
+                >
                   Buy now
                 </Button>
               )}
@@ -142,7 +126,15 @@ const Details = () => {
                     suffix="ARIO"
                     type="number"
                   />
-                  <Button variant="primary" className="w-full">
+                  <Button
+                    variant="primary"
+                    className="w-full"
+                    onClick={() => {
+                      navigate(
+                        `/listing/${name}/confirm-purchase?price=${PRICE}&type=english`,
+                      );
+                    }}
+                  >
                     Place bid
                   </Button>
                 </>
@@ -150,8 +142,16 @@ const Details = () => {
             </>
           ) : (
             <>
-              {!isSold && (
-                <Button variant="primary" className="w-full">
+              {!SOLD && (
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => {
+                    navigate(
+                      `/listing/${name}/confirm-purchase?price=${PRICE}&type=fixed`,
+                    );
+                  }}
+                >
                   Buy now
                 </Button>
               )}

@@ -34,6 +34,7 @@ const Home = React.lazy(() => import('./components/pages/Home/Home'));
 
 const Listing = React.lazy(() => import('./components/pages/Listing/Listing'));
 const Details = React.lazy(() => import('./components/pages/Listing/Details'));
+const Confirm = React.lazy(() => import('./components/pages/Listing/Confirm'));
 
 const ManageANT = React.lazy(
   () => import('./components/pages/ManageANT/ManageANT'),
@@ -365,6 +366,18 @@ function App() {
                 }
               >
                 <Details />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/listing/:name/confirm-purchase"
+            element={
+              <Suspense
+                fallback={
+                  <PageLoader loading={true} message={'Loading, please wait'} />
+                }
+              >
+                <Confirm />
               </Suspense>
             }
           />
