@@ -1,3 +1,4 @@
+import { buyListing } from '@blockydevs/arns-marketplace-data';
 import {
   Button,
   Card,
@@ -6,20 +7,62 @@ import {
   Row,
   Spinner,
 } from '@blockydevs/arns-marketplace-ui';
+import { useGlobalState, useWalletState } from '@src/state';
+import {
+  BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
+  BLOCKYDEVS_SWAP_TOKEN_ID,
+  marketplaceQueryKeys,
+} from '@src/utils/constants';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
-// MOCKED LOADING STATE
-const LOADING = true;
-
 const Confirm = () => {
   const [success, setSuccess] = useState(false);
-  const { name } = useParams();
+  const { id: listingId } = useParams();
   const searchParams = useSearchParams();
   const navigate = useNavigate();
 
+  const queryClient = useQueryClient();
+  const [{ antAoClient }] = useGlobalState();
+  const [{ wallet, walletAddress }] = useWalletState();
+
+  const name = searchParams[0].get('name') ?? '-';
+  const antProcessId = searchParams[0].get('antProcessId');
   const price = searchParams[0].get('price');
   const type = searchParams[0].get('type');
+
+  const mutation = useMutation({
+    mutationFn: async ({ price }: { price: string }) => {
+      if (!wallet || !walletAddress) {
+        throw new Error('No wallet connected');
+      }
+
+      if (!wallet.contractSigner) {
+        throw new Error('No wallet signer available');
+      }
+
+      if (!antProcessId) {
+        throw new Error('antProcessId is missing');
+      }
+
+      if (!listingId) {
+        throw new Error('listingId is missing');
+      }
+
+      return await buyListing({
+        ao: antAoClient,
+        orderId: listingId,
+        price,
+        arioProcessId: BLOCKYDEVS_SWAP_TOKEN_ID,
+        marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
+        antTokenId: antProcessId,
+        swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
+        walletAddress: walletAddress.toString(),
+        signer: wallet.contractSigner,
+      });
+    },
+  });
 
   if (success) {
     return (
@@ -103,13 +146,43 @@ const Confirm = () => {
             <Button
               variant="primary"
               size="small"
-              onClick={() => setSuccess(true)}
+              onClick={() => {
+                if (type === 'english') {
+                  window.alert('bid is unsupported yet');
+                  return;
+                }
+
+                if (!price) {
+                  throw new Error('price is missing');
+                }
+
+                mutation.mutate(
+                  { price },
+                  {
+                    onError: (error) => {
+                      window.alert(error.message);
+                    },
+                    onSuccess: async (data) => {
+                      console.log('buy success', { data });
+                      await Promise.all([
+                        queryClient.invalidateQueries({
+                          queryKey: [marketplaceQueryKeys.listings.all],
+                        }),
+                        queryClient.invalidateQueries({
+                          queryKey: [marketplaceQueryKeys.myANTs.all],
+                        }),
+                      ]);
+                      setSuccess(true);
+                    },
+                  },
+                );
+              }}
             >
               {type === 'english' ? 'Confirm bid' : 'Confirm purchase'}
             </Button>
           </div>
         </Card>
-        {LOADING && (
+        {mutation.isPending && (
           <div className="text-white flex mt-6 gap-3 items-center p-6 border ar:border-neutral-500 rounded-lg">
             <Spinner className="w-5 h-5" />
             <Paragraph className="text-xl">

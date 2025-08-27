@@ -11,7 +11,10 @@ import {
   Row,
   calculateDecreaseSchedule,
 } from '@blockydevs/arns-marketplace-ui';
-import { BLOCKYDEVS_ACTIVITY_PROCESS_ID } from '@src/utils/constants';
+import {
+  BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+  marketplaceQueryKeys,
+} from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,9 +24,10 @@ import { PriceScheduleModal } from '../MyANTs/PriceScheduleModal';
 const Details = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+
   const queryDetails = useQuery({
     enabled: !!id,
-    queryKey: ['listings', 'details', id],
+    queryKey: marketplaceQueryKeys.listings.item(id),
     queryFn: () => {
       if (!id) throw new Error('No id provided');
 
@@ -99,7 +103,7 @@ const Details = () => {
       </div>
       <div className="md:col-span-2 flex flex-col gap-4">
         <DetailsCard
-          price="250 ARIO"
+          price={`${queryDetails.data.price} ARIO`}
           sold={isSold}
           startDate="2025-08-01T10:00:00Z"
           endDate="2025-12-01T10:00:00Z"
@@ -179,7 +183,7 @@ const Details = () => {
                   className="w-full"
                   onClick={() => {
                     navigate(
-                      `/listing/${queryDetails.data.orderId}/confirm-purchase?price=${queryDetails.data.price}&type=fixed`,
+                      `/listing/${queryDetails.data.orderId}/confirm-purchase?price=${queryDetails.data.price}&type=fixed&name=${queryDetails.data.name}&antProcessId=${queryDetails.data.antProcessId}`,
                     );
                   }}
                 >

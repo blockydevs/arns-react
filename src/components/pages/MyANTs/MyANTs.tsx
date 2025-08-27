@@ -7,7 +7,10 @@ import {
   OwnedDomain,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
-import { BLOCKYDEVS_ACTIVITY_PROCESS_ID } from '@src/utils/constants';
+import {
+  BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+  marketplaceQueryKeys,
+} from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,7 +22,7 @@ const MyANTs = () => {
 
   const queryMyANTs = useQuery({
     enabled: !!walletAddress,
-    queryKey: ['my-ants', walletAddress],
+    queryKey: marketplaceQueryKeys.myANTs.list(walletAddress?.toString()),
     queryFn: () => {
       if (!walletAddress) throw new Error('No wallet address');
 
@@ -47,8 +50,6 @@ const MyANTs = () => {
       );
     },
   });
-
-  console.log(queryMyANTs.data);
 
   if (queryMyANTs.isPending) {
     return <p className="text-white text-center">loading...</p>;

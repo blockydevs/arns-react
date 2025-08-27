@@ -370,7 +370,7 @@ function App() {
             }
           />
           <Route
-            path="/listing/:name/confirm-purchase"
+            path="/listing/:id/confirm-purchase"
             element={
               <Suspense
                 fallback={

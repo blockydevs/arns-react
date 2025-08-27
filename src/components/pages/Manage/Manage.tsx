@@ -28,6 +28,8 @@ function Manage() {
   const [, dispatchModalState] = useModalState();
   const [search, setSearch] = useState<string>('');
 
+  console.log({ domains, ants });
+
   return (
     <div className="overflow-auto px-4 md:px-[100px] pb-[30px] pt-[10px]">
       <div className="flex flex-col gap-[10px]">
