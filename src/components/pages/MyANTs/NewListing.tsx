@@ -15,10 +15,12 @@ import {
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
 import {
+  BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   BLOCKYDEVS_SWAP_TOKEN_ID,
+  marketplaceQueryKeys,
 } from '@src/utils/constants';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDate } from 'date-fns';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -29,6 +31,7 @@ type Step = 1 | 2 | 3;
 
 function MyANTsNewListing() {
   // MOCKED STATE BEFORE FORM INTEGRATION
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const { antProcessId } = useParams();
@@ -73,9 +76,10 @@ function MyANTsNewListing() {
       const oneHourMs = 3600 * 1000;
       const oneDayMs = 24 * 3600 * 1000;
 
-      await createListing({
+      return await createListing({
         ao: antAoClient,
         antProcessId,
+        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
         marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
         config: (() => {
@@ -84,8 +88,7 @@ function MyANTsNewListing() {
               return {
                 type,
                 price: price.toString(),
-                // FIXME:
-                expiresAt: Date.now() + oneDayMs,
+                // FIXME: expires at
               };
             }
             case 'dutch': {
@@ -108,23 +111,22 @@ function MyANTsNewListing() {
               const durationMs = (() => {
                 if (duration === 'week') return 7 * oneDayMs;
                 if (duration === 'month') return 30 * oneDayMs;
-                throw new Error(`Unsupported duration value ${duration}`);
+                return undefined;
               })();
 
               return {
                 type,
-                expiresAt: Date.now() + durationMs,
                 price: price.toString(),
                 minimumPrice,
                 decreaseInterval: decreaseIntervalMs.toString(),
+                ...(durationMs && { expiresAt: Date.now() + durationMs }),
               };
             }
             case 'english': {
               return {
                 type,
                 price: price.toString(),
-                // FIXME:
-                expiresAt: Date.now() + oneDayMs,
+                // FIXME: expiresAt
               };
             }
             default: {
@@ -388,7 +390,16 @@ function MyANTsNewListing() {
                           console.error(error);
                           window.alert(error.message);
                         },
-                        onSuccess: () => {
+                        onSuccess: async (data) => {
+                          console.log('listing created', { data });
+                          await Promise.all([
+                            queryClient.invalidateQueries({
+                              queryKey: [marketplaceQueryKeys.listings.all],
+                            }),
+                            queryClient.invalidateQueries({
+                              queryKey: [marketplaceQueryKeys.myANTs.all],
+                            }),
+                          ]);
                           setStep(3);
                         },
                       });

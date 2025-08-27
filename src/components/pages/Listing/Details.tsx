@@ -11,7 +11,10 @@ import {
   Row,
   calculateDecreaseSchedule,
 } from '@blockydevs/arns-marketplace-ui';
-import { BLOCKYDEVS_ACTIVITY_PROCESS_ID } from '@src/utils/constants';
+import {
+  BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+  marketplaceQueryKeys,
+} from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,7 +23,33 @@ import { PriceScheduleModal } from '../MyANTs/PriceScheduleModal';
 
 const Details = () => {
   const navigate = useNavigate();
-  const { name } = useParams();
+  const { id } = useParams();
+
+  const queryDetails = useQuery({
+    enabled: !!id,
+    queryKey: marketplaceQueryKeys.listings.item(id),
+    queryFn: () => {
+      if (!id) throw new Error('No id provided');
+
+      return fetchListingDetails({
+        orderId: id,
+        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+      });
+    },
+  });
+
+  if (queryDetails.isPending) {
+    return <p className="text-white text-center">loading...</p>;
+  }
+
+  if (queryDetails.error) {
+    return (
+      <p className="text-error text-center">{queryDetails.error.message}</p>
+    );
+  }
+
+  const isOwner = false;
+  const isSold = false;
 
   return (
     <div className="max-w-6xl w-full px-6 mx-auto grid md:grid-cols-5 gap-6 py-12">
@@ -74,7 +103,7 @@ const Details = () => {
       </div>
       <div className="md:col-span-2 flex flex-col gap-4">
         <DetailsCard
-          price="250 ARIO"
+          price={`${queryDetails.data.price} ARIO`}
           sold={isSold}
           startDate="2025-08-01T10:00:00Z"
           endDate="2025-12-01T10:00:00Z"
@@ -154,7 +183,7 @@ const Details = () => {
                   className="w-full"
                   onClick={() => {
                     navigate(
-                      `/listing/${queryDetails.data.orderId}/confirm-purchase?price=${queryDetails.data.price}&type=fixed`,
+                      `/listing/${queryDetails.data.orderId}/confirm-purchase?price=${queryDetails.data.price}&type=fixed&name=${queryDetails.data.name}&antProcessId=${queryDetails.data.antProcessId}`,
                     );
                   }}
                 >
