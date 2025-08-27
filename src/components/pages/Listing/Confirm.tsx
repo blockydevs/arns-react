@@ -1,4 +1,4 @@
-import { buyListing } from '@blockydevs/arns-marketplace-data';
+import { bidListing, buyListing } from '@blockydevs/arns-marketplace-data';
 import {
   Button,
   Card,
@@ -32,7 +32,7 @@ const Confirm = () => {
   const price = searchParams[0].get('price');
   const type = searchParams[0].get('type');
 
-  const mutation = useMutation({
+  const mutationBuyListing = useMutation({
     mutationFn: async ({ price }: { price: string }) => {
       if (!wallet || !walletAddress) {
         throw new Error('No wallet connected');
@@ -54,7 +54,37 @@ const Confirm = () => {
         ao: antAoClient,
         orderId: listingId,
         price,
-        arioProcessId: BLOCKYDEVS_SWAP_TOKEN_ID,
+        marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
+        antTokenId: antProcessId,
+        swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
+        walletAddress: walletAddress.toString(),
+        signer: wallet.contractSigner,
+      });
+    },
+  });
+
+  const mutationBidListing = useMutation({
+    mutationFn: async ({ price }: { price: string }) => {
+      if (!wallet || !walletAddress) {
+        throw new Error('No wallet connected');
+      }
+
+      if (!wallet.contractSigner) {
+        throw new Error('No wallet signer available');
+      }
+
+      if (!antProcessId) {
+        throw new Error('antProcessId is missing');
+      }
+
+      if (!listingId) {
+        throw new Error('listingId is missing');
+      }
+
+      return await bidListing({
+        ao: antAoClient,
+        orderId: listingId,
+        bidPrice: price,
         marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         antTokenId: antProcessId,
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
@@ -91,7 +121,7 @@ const Confirm = () => {
               <Button
                 variant="primary"
                 size="small"
-                onClick={() => navigate('/listing')}
+                onClick={() => navigate(`/listing/${listingId}`)}
               >
                 View listing
               </Button>
@@ -107,11 +137,19 @@ const Confirm = () => {
           </Card>
           <div className="flex gap-6 mt-6">
             {type !== 'english' && (
-              <Button variant="secondary" className="w-full">
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={() => navigate(`/listing/${listingId}`)}
+              >
                 View this listing
               </Button>
             )}
-            <Button variant="secondary" className="w-full">
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => navigate(`/listing`)}
+            >
               Go to marketplace
             </Button>
           </div>
@@ -147,10 +185,9 @@ const Confirm = () => {
               variant="primary"
               size="small"
               onClick={() => {
-                if (type === 'english') {
-                  window.alert('bid is unsupported yet');
-                  return;
-                }
+                const operation = type === 'english' ? 'bid' : 'buy';
+                const mutation =
+                  operation === 'bid' ? mutationBidListing : mutationBuyListing;
 
                 if (!price) {
                   throw new Error('price is missing');
@@ -163,7 +200,7 @@ const Confirm = () => {
                       window.alert(error.message);
                     },
                     onSuccess: async (data) => {
-                      console.log('buy success', { data });
+                      console.log(`${operation} success`, { data });
                       await Promise.all([
                         queryClient.invalidateQueries({
                           queryKey: [marketplaceQueryKeys.listings.all],
@@ -182,7 +219,7 @@ const Confirm = () => {
             </Button>
           </div>
         </Card>
-        {mutation.isPending && (
+        {(mutationBuyListing.isPending || mutationBidListing.isPending) && (
           <div className="text-white flex mt-6 gap-3 items-center p-6 border ar:border-neutral-500 rounded-lg">
             <Spinner className="w-5 h-5" />
             <Paragraph className="text-xl">

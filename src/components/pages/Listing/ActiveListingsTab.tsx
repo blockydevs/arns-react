@@ -17,9 +17,7 @@ import { useNavigate } from 'react-router-dom';
 const ActiveListingsTab = () => {
   const [index, setIndex] = useState(1);
   const navigate = useNavigate();
-
   const [{ aoClient }] = useGlobalState();
-
   const queryActiveListings = useQuery({
     queryKey: marketplaceQueryKeys.listings.list('active'),
     queryFn: () => {
