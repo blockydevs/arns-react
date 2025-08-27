@@ -261,8 +261,35 @@ export const LINK_HOW_ARE_CONVERSIONS_DETERMINED =
   'https://help.ardrive.io/hc/en-us/articles/17043397992731';
 
 export const BLOCKYDEVS_ACTIVITY_PROCESS_ID =
-  'QALO2OogDmCA4j444avH_83UNAFbpYAq8zO3dqizueU';
+  'bNJGV0mNsZ0iMMiEZPbMtOQOfB0a6RJuPs3whiFLHyo';
 export const BLOCKYDEVS_MARKETPLACE_PROCESS_ID =
   'H8UI-IFfoFrnpIsl-MYE4brqRDR2FodL4ICzPklfxw8';
 export const BLOCKYDEVS_SWAP_TOKEN_ID =
   'agYcCFJtrMG6cqMuZfskIkFTGvUPddICmtQSBIoPdiA';
+export const marketplaceQueryKeys = {
+  myANTs: {
+    all: 'my-ants',
+    list: (walletAddress: string | undefined) => [
+      marketplaceQueryKeys.myANTs.all,
+      walletAddress,
+    ],
+    item: (walletAddress: string | undefined, antId: string) => [
+      marketplaceQueryKeys.myANTs.all,
+      walletAddress,
+      antId,
+    ],
+  },
+  listings: {
+    all: 'listings',
+    list: (type: 'active' | 'completed', options?: Record<string, unknown>) => [
+      marketplaceQueryKeys.listings.all,
+      type,
+      options,
+    ],
+    item: (id: string | undefined) => [
+      marketplaceQueryKeys.listings.all,
+      'details',
+      id,
+    ],
+  },
+};
