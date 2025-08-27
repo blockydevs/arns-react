@@ -11,20 +11,23 @@ import {
   Row,
   calculateDecreaseSchedule,
 } from '@blockydevs/arns-marketplace-ui';
+import { useWalletState } from '@src/state';
 import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   marketplaceQueryKeys,
 } from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { PriceScheduleModal } from '../MyANTs/PriceScheduleModal';
 
 const Details = () => {
+  const [bidPrice, setBidPrice] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   const { id } = useParams();
-
+  const [{ walletAddress }] = useWalletState();
   const queryDetails = useQuery({
     enabled: !!id,
     queryKey: marketplaceQueryKeys.listings.item(id),
@@ -48,8 +51,19 @@ const Details = () => {
     );
   }
 
-  const isOwner = false;
+  const isOwner = queryDetails.data.sender === walletAddress;
   const isSold = false;
+
+  const navigateToConfirmPurchase = (type: 'fixed' | 'english' | 'dutch') => {
+    const orderId = queryDetails.data.orderId;
+    const name = queryDetails.data.name;
+    const antProcessId = queryDetails.data.antProcessId;
+    const price = type === 'english' ? bidPrice : queryDetails.data.price;
+
+    navigate(
+      `/listing/${orderId}/confirm-purchase?price=${price}&type=${type}&name=${name}&antProcessId=${antProcessId}`,
+    );
+  };
 
   return (
     <div className="max-w-6xl w-full px-6 mx-auto grid md:grid-cols-5 gap-6 py-12">
@@ -129,9 +143,7 @@ const Details = () => {
                   variant="primary"
                   className="w-full"
                   onClick={() => {
-                    navigate(
-                      `/listing/${queryDetails.data.orderId}/confirm-purchase?price=${queryDetails.data.price}&type=dutch`,
-                    );
+                    navigateToConfirmPurchase('dutch');
                   }}
                 >
                   Buy now
@@ -153,8 +165,8 @@ const Details = () => {
                 <>
                   <Paragraph>Starting price: 100 ARIO</Paragraph>
                   <Input
-                    onChange={() => {
-                      console.log('test');
+                    onChange={(e) => {
+                      setBidPrice(e.target.value);
                     }}
                     placeholder={`${queryDetails.data.price} and up`}
                     label="Name your price"
@@ -165,9 +177,7 @@ const Details = () => {
                     variant="primary"
                     className="w-full"
                     onClick={() => {
-                      navigate(
-                        `/listing/${name}/confirm-purchase?price=${PRICE}&type=english`,
-                      );
+                      navigateToConfirmPurchase('english');
                     }}
                   >
                     Place bid
@@ -182,9 +192,7 @@ const Details = () => {
                   variant="primary"
                   className="w-full"
                   onClick={() => {
-                    navigate(
-                      `/listing/${queryDetails.data.orderId}/confirm-purchase?price=${queryDetails.data.price}&type=fixed&name=${queryDetails.data.name}&antProcessId=${queryDetails.data.antProcessId}`,
-                    );
+                    navigateToConfirmPurchase('fixed');
                   }}
                 >
                   Buy now
