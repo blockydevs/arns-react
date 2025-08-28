@@ -1,5 +1,5 @@
 import { ARIO_TESTNET_PROCESS_ID } from '@ar.io/sdk';
-import { fetchMyANTs } from '@blockydevs/arns-marketplace-data';
+import { fetchMyANTs, marioToArio } from '@blockydevs/arns-marketplace-data';
 import {
   Card,
   Header,
@@ -54,7 +54,7 @@ const MyANTs = () => {
             ? {
                 type: domain.listing.type === 'english' ? 'bid' : 'buyout',
                 symbol: 'ARIO',
-                value: Number(domain.listing.price),
+                value: marioToArio(domain.listing.price),
               }
             : undefined,
           type: domain.listing

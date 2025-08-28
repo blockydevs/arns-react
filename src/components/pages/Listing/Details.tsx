@@ -1,4 +1,7 @@
-import { fetchListingDetails } from '@blockydevs/arns-marketplace-data';
+import {
+  fetchListingDetails,
+  marioToArio,
+} from '@blockydevs/arns-marketplace-data';
 import {
   BidsTable,
   Button,
@@ -59,12 +62,23 @@ const Details = () => {
   const isOwner = queryDetails.data.sender === walletAddress;
   // FIXME:
   const isSold = queryDetails.data.status !== 'active';
+  const marioPrice =
+    queryDetails.data.type === 'english'
+      ? queryDetails.data.highestBid
+      : queryDetails.data.price;
+  const price = marioToArio(marioPrice);
 
   const navigateToConfirmPurchase = (type: 'fixed' | 'english' | 'dutch') => {
     const orderId = queryDetails.data.orderId;
     const name = queryDetails.data.name;
     const antProcessId = queryDetails.data.antProcessId;
-    const price = type === 'english' ? bidPrice : queryDetails.data.price;
+    const marioPrice = type === 'english' ? bidPrice : queryDetails.data.price;
+
+    if (!marioPrice) {
+      throw new Error('Price is not set');
+    }
+
+    const price = marioToArio(marioPrice);
 
     navigate(
       `/listing/${orderId}/confirm-purchase?price=${price}&type=${type}&name=${name}&antProcessId=${antProcessId}`,
@@ -127,9 +141,9 @@ const Details = () => {
                 // FIXME: it should be required for dutch
                 queryDetails.data.expiresAt ??
                   new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                Number(queryDetails.data.minimumPrice),
+                marioToArio(queryDetails.data.minimumPrice),
                 '12hours', // FIXME:
-                Number(queryDetails.data.startingPrice),
+                marioToArio(queryDetails.data.startingPrice),
               )}
             />
           </Card>
@@ -137,11 +151,7 @@ const Details = () => {
       </div>
       <div className="md:col-span-2 flex flex-col gap-4">
         <DetailsCard
-          price={`${
-            queryDetails.data.type === 'english'
-              ? queryDetails.data.highestBid
-              : queryDetails.data.price
-          } ARIO`}
+          price={`${price} ARIO`}
           sold={isSold}
           startDate={queryDetails.data.createdAt}
           endDate={queryDetails.data.expiresAt}
@@ -150,10 +160,11 @@ const Details = () => {
           {queryDetails.data.type === 'dutch' ? (
             <>
               <Paragraph>
-                Starting price: {queryDetails.data.startingPrice} ARIO
+                Starting price: {marioToArio(queryDetails.data.startingPrice)}{' '}
+                ARIO
               </Paragraph>
               <Paragraph>
-                Floor price: {queryDetails.data.minimumPrice} ARIO
+                Floor price: {marioToArio(queryDetails.data.minimumPrice)} ARIO
               </Paragraph>
               {/* FIXME: format interval */}
               <Paragraph>
@@ -176,7 +187,8 @@ const Details = () => {
               {isSold ? (
                 <>
                   <Paragraph>
-                    Starting price: {queryDetails.data.startingPrice} ARIO
+                    Starting price:{' '}
+                    {marioToArio(queryDetails.data.startingPrice)} ARIO
                   </Paragraph>
                   {isOwner && (
                     <Button variant="primary" className="w-full">
@@ -187,13 +199,16 @@ const Details = () => {
               ) : (
                 <>
                   <Paragraph>
-                    Starting price: {queryDetails.data.startingPrice} ARIO
+                    Starting price:{' '}
+                    {marioToArio(queryDetails.data.startingPrice)} ARIO
                   </Paragraph>
                   <Input
                     onChange={(e) => {
                       setBidPrice(e.target.value);
                     }}
-                    placeholder={`${queryDetails.data.highestBid} and up`}
+                    placeholder={`${marioToArio(
+                      queryDetails.data.highestBid,
+                    )} and up`}
                     label="Name your price"
                     suffix="ARIO"
                     type="number"
@@ -250,7 +265,7 @@ const Details = () => {
                 bidder: bid.bidder,
                 href: `${AO_LINK_EXPLORER_URL}/${bid.bidder}`,
                 date: new Date().toISOString(),
-                price: bid.amount,
+                price: marioToArio(bid.amount).toString(),
               }))}
             />
           </Card>
