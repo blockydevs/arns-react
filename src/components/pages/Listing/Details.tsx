@@ -47,8 +47,8 @@ const Details = () => {
 
   if (queryDetails.isPending) {
     return (
-      <div className="flex justify-center">
-        <Spinner className="text-white size-5" />
+      <div className="flex justify-center grow items-center">
+        <Spinner className="text-primary size-8" />
       </div>
     );
   }
@@ -216,11 +216,17 @@ const Details = () => {
                   <Button
                     variant="primary"
                     className="w-full"
+                    disabled={
+                      bidPrice === undefined ||
+                      Number(bidPrice) < Number(queryDetails.data.highestBid)
+                    }
                     onClick={() => {
                       navigateToConfirmPurchase('english');
                     }}
                   >
-                    Place bid
+                    {Number(bidPrice) > Number(queryDetails.data.highestBid)
+                      ? 'Place bid'
+                      : 'Too small bid'}
                   </Button>
                 </>
               )}
