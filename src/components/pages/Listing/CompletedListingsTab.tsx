@@ -41,6 +41,7 @@ const CompletedListingsTab = () => {
         items: data.items.map(
           (item): Domain => ({
             name: item.name,
+            createdAt: item.createdAt,
             endDate: item.endedAt,
             price: {
               type: item.type === 'english' ? 'bid' : 'buyout',
