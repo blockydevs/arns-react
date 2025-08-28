@@ -11,6 +11,7 @@ import {
   Row,
   Spinner,
   calculateDecreaseSchedule,
+  shortenAddress,
 } from '@blockydevs/arns-marketplace-ui';
 import { useWalletState } from '@src/state';
 import {
@@ -99,9 +100,7 @@ const Details = () => {
                   openExplorer(queryDetails.data.sender);
                 }}
               >
-                {/* FIXME: shorten address */}
-                {queryDetails.data.sender.slice(0, 4)}...
-                {queryDetails.data.sender.slice(-4)}
+                {shortenAddress(queryDetails.data.sender)}
               </Button>
             </Row>
             <Row label="View on explorer">
@@ -114,9 +113,7 @@ const Details = () => {
                   openExplorer(queryDetails.data.orderId);
                 }}
               >
-                {/* FIXME: shorten address */}
-                {queryDetails.data.orderId.slice(0, 4)}...
-                {queryDetails.data.orderId.slice(-4)}
+                {shortenAddress(queryDetails.data.orderId)}
               </Button>
             </Row>
           </div>
@@ -149,7 +146,6 @@ const Details = () => {
           } ARIO`}
           sold={isSold}
           startDate={queryDetails.data.createdAt}
-          // FIXME: should support null here
           endDate={queryDetails.data.expiresAt}
           variant={queryDetails.data.type}
         >
