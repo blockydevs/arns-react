@@ -24,8 +24,6 @@ import { ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { PriceScheduleModal } from '../MyANTs/PriceScheduleModal';
-
 const Details = () => {
   const [bidPrice, setBidPrice] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
@@ -161,14 +159,7 @@ const Details = () => {
               <Paragraph>
                 Price decrease: every {queryDetails.data.decreaseInterval}
               </Paragraph>
-              <PriceScheduleModal
-                basePrice={Number(queryDetails.data.startingPrice)}
-                floorPrice={Number(queryDetails.data.minimumPrice)}
-                date={queryDetails.data.createdAt}
-                // FIXME: use queryDetails.data.decreaseInterval
-                interval="12hours"
-              />
-              {!SOLD && (
+              {!isSold && (
                 <Button
                   variant="primary"
                   className="w-full"
