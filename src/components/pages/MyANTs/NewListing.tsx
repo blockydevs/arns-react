@@ -12,6 +12,7 @@ import {
   Row,
   Select,
   SelectOption,
+  formatDate,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
 import {
@@ -21,7 +22,7 @@ import {
   marketplaceQueryKeys,
 } from '@src/utils/constants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { formatDate } from 'date-fns';
+import { addMilliseconds } from 'date-fns';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -227,6 +228,30 @@ function MyANTsNewListing() {
     { label: 'week', value: 'week' },
   ];
 
+  // FIXME: replace with util
+  const pickMilisekundsBasedOnDuration = (value: string) => {
+    switch (value) {
+      case 'test':
+        return 5 * 60 * 1000;
+      case 'week':
+        return 7 * 24 * 60 * 60 * 1000;
+      case 'month':
+        return 30 * 24 * 60 * 60 * 1000;
+      default:
+        return 0;
+    }
+  };
+
+  const endDate =
+    duration === 'custom'
+      ? date
+        ? `${formatDate(date.toString(), 'yyyy-MM-dd')}T${time}`
+        : new Date().toString()
+      : addMilliseconds(
+          new Date(),
+          pickMilisekundsBasedOnDuration(duration ?? '0'),
+        ).toString();
+
   return (
     <>
       {renderProperGoBackHeader(step)}
@@ -291,7 +316,7 @@ function MyANTsNewListing() {
                     <PriceScheduleModal
                       basePrice={Number(price)}
                       floorPrice={Number(minimumPrice)}
-                      date="2025-08-28T00:00:00"
+                      date={endDate}
                       interval={decrease as Interval}
                     />
                   </div>
@@ -384,7 +409,14 @@ function MyANTsNewListing() {
                   {hasExpirationTime ? (
                     <Row
                       label="Expiration time"
-                      value={`${formatDate(date ?? '-', 'dd.MM.yyyy')} ${time}`}
+                      value={
+                        date
+                          ? `${formatDate(
+                              date.toString(),
+                              'yyyy-MM-dd',
+                            )}T${time}`
+                          : '-'
+                      }
                     />
                   ) : (
                     <Row
