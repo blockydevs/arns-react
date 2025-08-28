@@ -14,16 +14,21 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const PAGE_SIZE = 10;
+
 const ActiveListingsTab = () => {
-  const [index, setIndex] = useState(1);
+  const [page, setPage] = useState(1);
   const navigate = useNavigate();
   const [{ aoClient }] = useGlobalState();
   const queryActiveListings = useQuery({
-    queryKey: marketplaceQueryKeys.listings.list('active'),
+    queryKey: marketplaceQueryKeys.listings.list('active', {
+      pageSize: PAGE_SIZE,
+    }),
     queryFn: () => {
       return fetchActiveListings({
         ao: aoClient,
         activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        limit: PAGE_SIZE,
       });
     },
     select: (data) => {
@@ -32,14 +37,14 @@ const ActiveListingsTab = () => {
         items: data.items.map(
           (item): Domain => ({
             name: item.name,
-            endDate: item.expiresAt,
+            endDate: item.expiresAt ?? undefined,
             price: {
               type: item.type === 'english' ? 'bid' : 'buyout',
               symbol: 'ARIO',
               value: Number(item.price),
             },
             type: {
-              value: item.type === 'fixed' ? 'fixed-price' : item.type,
+              value: item.type,
             },
             action: () => {
               navigate(`/listing/${item.orderId}`);
@@ -62,8 +67,7 @@ const ActiveListingsTab = () => {
     );
   }
 
-  // FIXME: divide by 0
-  // FIXME: page size
+  // FIXME: proper pagination, avoid dividing by 0
   const totalPages = Math.max(
     1,
     Math.ceil(
@@ -76,8 +80,8 @@ const ActiveListingsTab = () => {
       <ActiveListingTable data={queryActiveListings.data.items} />
       <Pagination
         totalPages={totalPages}
-        activeIndex={index}
-        onPageChange={setIndex}
+        activeIndex={page}
+        onPageChange={setPage}
       />
     </Card>
   );

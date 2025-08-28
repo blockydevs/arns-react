@@ -146,11 +146,7 @@ const Details = () => {
           startDate={queryDetails.data.createdAt}
           // FIXME: should support null here
           endDate={queryDetails.data.expiresAt}
-          variant={
-            queryDetails.data.type === 'fixed'
-              ? 'fixed-price'
-              : queryDetails.data.type
-          }
+          variant={queryDetails.data.type}
         >
           {queryDetails.data.type === 'dutch' ? (
             <>
