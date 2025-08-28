@@ -7,7 +7,6 @@ import {
   CompletedListingTable,
   type Domain,
   Pagination,
-  Spinner,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState } from '@src/state';
 import {
@@ -60,39 +59,25 @@ const CompletedListingsTab = () => {
     },
   });
 
-  if (queryCompletedListings.isPending) {
-    return (
-      <div className="flex justify-center">
-        <Spinner className="text-white size-5" />
-      </div>
-    );
-  }
+  const totalItems = queryCompletedListings.data?.totalItems ?? 1;
+  const limit = queryCompletedListings.data?.limit ?? 1;
 
-  if (queryCompletedListings.error) {
-    return (
-      <p className="text-error text-center">
-        {queryCompletedListings.error.message}
-      </p>
-    );
-  }
-
-  // FIXME: proper pagination, avoid dividing by 0
-  const totalPages = Math.max(
-    1,
-    Math.ceil(
-      queryCompletedListings.data.totalItems /
-        queryCompletedListings.data.limit,
-    ),
-  );
+  const totalPages = Math.max(1, Math.ceil(totalItems / limit));
 
   return (
     <Card className="flex flex-col gap-8">
-      <CompletedListingTable data={queryCompletedListings.data.items} />
-      <Pagination
-        totalPages={totalPages}
-        activeIndex={page}
-        onPageChange={setPage}
+      <CompletedListingTable
+        data={queryCompletedListings.data?.items ?? []}
+        isPending={queryCompletedListings.isPending}
+        error={queryCompletedListings.error?.message}
       />
+      {!queryCompletedListings.isPending && (
+        <Pagination
+          totalPages={totalPages}
+          activeIndex={page}
+          onPageChange={setPage}
+        />
+      )}
     </Card>
   );
 };
