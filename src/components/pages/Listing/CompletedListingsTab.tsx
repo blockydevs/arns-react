@@ -1,4 +1,7 @@
-import { fetchCompletedListings } from '@blockydevs/arns-marketplace-data';
+import {
+  fetchCompletedListings,
+  marioToArio,
+} from '@blockydevs/arns-marketplace-data';
 import {
   Card,
   CompletedListingTable,
@@ -43,7 +46,7 @@ const CompletedListingsTab = () => {
             price: {
               type: item.type === 'english' ? 'bid' : 'buyout',
               symbol: 'ARIO',
-              value: Number(item.price),
+              value: marioToArio(item.price),
             },
             type: {
               value: item.type,
