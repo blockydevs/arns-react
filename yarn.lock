@@ -1526,16 +1526,16 @@
 
 "@blockydevs/arns-marketplace-data@^0.1.36":
   version "0.1.36"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.36.tgz#fbc476407da0336ee939d6b9d6f0b0753e80504d"
-  integrity sha512-rJQCgwU3Q/4DPgVAjIvUzejET0ad4h3B2MuoqNyCGedWI13cQIqKb2JkoHmL2Dx/sEDP7dzKAbSQkNBAJFLCIg==
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.36.tgz#3156ac8c231f7f7b2a6fa6e15a20ba5e3539d036"
+  integrity sha512-op43+LFMtvhJkP57wgTkBXFsR7k0xWsfEN+Jr3AsuXa2q9m2bZgR3/FvzPBFOKSoHnZa1+t7tQroyOUj9vAWIw==
   dependencies:
     "@ar.io/sdk" "^3.18.1"
     "@permaweb/aoconnect" "^0.0.87"
 
-"@blockydevs/arns-marketplace-ui@^0.1.74":
-  version "0.1.74"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.74.tgz#b312f464b653fc05be059123682eceb9991d4956"
-  integrity sha512-nFprF7ySmz8zeEuoAJgM6H3Ct4/g158yGD3BgUROyE7LC2S5d2EfQ9gdpv0+MKM1qoV63a8eYoOU6ZTQTVZEPg==
+"@blockydevs/arns-marketplace-ui@^0.1.76":
+  version "0.1.76"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.76.tgz#1987e12fb81d9b2cd68db1971d76cdb46f9f4573"
+  integrity sha512-pXxaXUZE2wannax9F8W6DCB0YL1J/ufQ6/9DI9za4CIy/BiXNjgJz74yTy3Ry9m+zZRf4DnUlRa61paNqlj+Jg==
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"
