@@ -14,18 +14,22 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const CompletedListingsTab = () => {
-  const [index, setIndex] = useState(1);
-  const navigate = useNavigate();
+const PAGE_SIZE = 10;
 
+const CompletedListingsTab = () => {
+  const [page, setPage] = useState(1);
+  const navigate = useNavigate();
   const [{ aoClient }] = useGlobalState();
 
   const queryCompletedListings = useQuery({
-    queryKey: marketplaceQueryKeys.listings.list('completed'),
+    queryKey: marketplaceQueryKeys.listings.list('completed', {
+      pageSize: PAGE_SIZE,
+    }),
     queryFn: () => {
       return fetchCompletedListings({
         ao: aoClient,
         activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        limit: PAGE_SIZE,
       });
     },
     select: (data) => {
@@ -41,7 +45,7 @@ const CompletedListingsTab = () => {
               value: Number(item.price),
             },
             type: {
-              value: item.type === 'fixed' ? 'fixed-price' : item.type,
+              value: item.type,
             },
             action: () => {
               navigate(`/listing/${item.orderId}`);
@@ -64,8 +68,7 @@ const CompletedListingsTab = () => {
     );
   }
 
-  // FIXME: divide by 0
-  // FIXME: page size
+  // FIXME: proper pagination, avoid dividing by 0
   const totalPages = Math.max(
     1,
     Math.ceil(
@@ -79,8 +82,8 @@ const CompletedListingsTab = () => {
       <CompletedListingTable data={queryCompletedListings.data.items} />
       <Pagination
         totalPages={totalPages}
-        activeIndex={index}
-        onPageChange={setIndex}
+        activeIndex={page}
+        onPageChange={setPage}
       />
     </Card>
   );
