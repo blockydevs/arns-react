@@ -221,7 +221,7 @@ const Confirm = () => {
         </Card>
         {(mutationBuyListing.isPending || mutationBidListing.isPending) && (
           <div className="text-white flex mt-6 gap-3 items-center p-6 border ar:border-neutral-500 rounded-lg">
-            <Spinner className="w-5 h-5" />
+            <Spinner className="size-5" />
             <Paragraph className="text-xl">
               Waiting for wallet confirmation...
             </Paragraph>

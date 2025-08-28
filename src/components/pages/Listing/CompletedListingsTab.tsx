@@ -4,6 +4,7 @@ import {
   CompletedListingTable,
   type Domain,
   Pagination,
+  Spinner,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState } from '@src/state';
 import {
@@ -57,7 +58,11 @@ const CompletedListingsTab = () => {
   });
 
   if (queryCompletedListings.isPending) {
-    return <p className="text-white text-center">loading...</p>;
+    return (
+      <div className="flex justify-center">
+        <Spinner className="text-white size-5" />
+      </div>
+    );
   }
 
   if (queryCompletedListings.error) {

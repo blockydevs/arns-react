@@ -9,6 +9,7 @@ import {
   Input,
   Paragraph,
   Row,
+  Spinner,
   calculateDecreaseSchedule,
 } from '@blockydevs/arns-marketplace-ui';
 import { useWalletState } from '@src/state';
@@ -43,7 +44,11 @@ const Details = () => {
   });
 
   if (queryDetails.isPending) {
-    return <p className="text-white text-center">loading...</p>;
+    return (
+      <div className="flex justify-center">
+        <Spinner className="text-white size-5" />
+      </div>
+    );
   }
 
   if (queryDetails.error) {
