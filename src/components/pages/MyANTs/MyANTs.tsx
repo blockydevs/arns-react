@@ -5,6 +5,7 @@ import {
   Header,
   MyANTsTable,
   OwnedDomain,
+  Spinner,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
 import {
@@ -68,7 +69,11 @@ const MyANTs = () => {
   });
 
   if (queryMyANTs.isPending) {
-    return <p className="text-white text-center">loading...</p>;
+    return (
+      <div className="flex justify-center">
+        <Spinner className="text-white size-5" />
+      </div>
+    );
   }
 
   if (queryMyANTs.error) {
