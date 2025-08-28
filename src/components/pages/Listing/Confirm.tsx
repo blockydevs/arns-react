@@ -184,6 +184,9 @@ const Confirm = () => {
             <Button
               variant="primary"
               size="small"
+              disabled={
+                mutationBidListing.isPending || mutationBuyListing.isPending
+              }
               onClick={() => {
                 const operation = type === 'english' ? 'bid' : 'buy';
                 const mutation =

@@ -29,6 +29,22 @@ import { PriceScheduleModal } from './PriceScheduleModal';
 
 type Step = 1 | 2 | 3;
 
+function mergeDateAndTime(
+  date: Date | undefined,
+  time: string,
+): Date | undefined {
+  if (!date) return undefined;
+
+  const [hours, minutes, seconds] = time.split(':').map(Number);
+  const merged = new Date(date);
+
+  merged.setHours(hours);
+  merged.setMinutes(minutes);
+  merged.setSeconds(seconds);
+
+  return merged;
+}
+
 function MyANTsNewListing() {
   // MOCKED STATE BEFORE FORM INTEGRATION
   const queryClient = useQueryClient();
@@ -44,7 +60,7 @@ function MyANTsNewListing() {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [time, setTime] = useState<string>('12:00:00');
-  const [checked, setChecked] = useState(false);
+  const [hasExpirationTime, setHasExpirationTime] = useState(false);
 
   const [{ antAoClient }] = useGlobalState();
   const [{ wallet, walletAddress }] = useWalletState();
@@ -85,10 +101,14 @@ function MyANTsNewListing() {
         config: (() => {
           switch (type) {
             case 'fixed': {
+              const expiresAt = hasExpirationTime
+                ? mergeDateAndTime(date, time)?.getTime()
+                : undefined;
+
               return {
                 type,
                 price: price.toString(),
-                // FIXME: expires at
+                expiresAt,
               };
             }
             case 'dutch': {
@@ -109,6 +129,7 @@ function MyANTsNewListing() {
               })();
 
               const durationMs = (() => {
+                if (duration === 'test') return 5 * 60 * 1000;
                 if (duration === 'week') return 7 * oneDayMs;
                 if (duration === 'month') return 30 * oneDayMs;
                 return undefined;
@@ -123,10 +144,20 @@ function MyANTsNewListing() {
               };
             }
             case 'english': {
+              const expiresAt = (() => {
+                if (duration === 'test') return Date.now() + 5 * 60 * 1000;
+                if (duration === 'week') return Date.now() + 7 * oneDayMs;
+                if (duration === 'month') return Date.now() + 30 * oneDayMs;
+                if (duration === 'custom')
+                  return mergeDateAndTime(date, time)?.getTime();
+
+                return undefined;
+              })();
+
               return {
                 type,
                 price: price.toString(),
-                // FIXME: expiresAt
+                expiresAt,
               };
             }
             default: {
@@ -183,6 +214,7 @@ function MyANTsNewListing() {
   ];
 
   const durationOptions: SelectOption[] = [
+    { label: '5 minutes', value: 'test' },
     { label: '1 week', value: 'week' },
     { label: '1 month', value: 'month' },
     { label: 'Custom date', value: 'custom' },
@@ -295,14 +327,14 @@ function MyANTsNewListing() {
                   </p>
                   <CheckboxWithLabel
                     label="Set expiration date"
-                    checked={checked}
+                    checked={hasExpirationTime}
                     onCheckedChange={() => {
-                      setChecked((state) => !state);
+                      setHasExpirationTime((state) => !state);
                       setTime('12:00:00');
                       setDate(undefined);
                     }}
                   />
-                  {checked && (
+                  {hasExpirationTime && (
                     <div className="mt-6">
                       <DatePicker
                         date={date}
@@ -349,7 +381,7 @@ function MyANTsNewListing() {
                 </>
               ) : (
                 <>
-                  {checked ? (
+                  {hasExpirationTime ? (
                     <Row
                       label="Expiration time"
                       value={`${formatDate(date ?? '-', 'dd.MM.yyyy')} ${time}`}
