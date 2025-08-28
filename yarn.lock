@@ -1524,10 +1524,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blockydevs/arns-marketplace-data@^0.1.40":
-  version "0.1.40"
-  resolved "https://living-lark-publicly.ngrok-free.app/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.40.tgz#c6b523e2a5f2002545d0b40e79e62e8056ca4aba"
-  integrity sha512-AHQsfMlCdr0jm7nL3a8oHppWhuY/aZyUOA6reyw9CKaIlLA/wPzxyMsodQqiGbISzncVMCz4Lrzy2wwry4qbNA==
+"@blockydevs/arns-marketplace-data@^0.1.43":
+  version "0.1.43"
+  resolved "https://living-lark-publicly.ngrok-free.app/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.43.tgz#c8b7ec2414c7e1e7b5519964642eb8047af5fa8d"
+  integrity sha512-9oqMLhcDO4dfN4/JQu4ixLq3cqBBM8HNVQV/FW6p2EU7hKlzRnyMsYbHzay1Mj4CpHYvY5SzFtzsNTjJHapLOQ==
   dependencies:
     "@ar.io/sdk" "^3.18.1"
     "@permaweb/aoconnect" "^0.0.87"

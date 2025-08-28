@@ -50,6 +50,10 @@ const Confirm = () => {
         throw new Error('listingId is missing');
       }
 
+      if (!type) {
+        throw new Error(`type is missing or invalid (${type})`);
+      }
+
       return await buyListing({
         ao: antAoClient,
         orderId: listingId,
@@ -59,6 +63,7 @@ const Confirm = () => {
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
         walletAddress: walletAddress.toString(),
         signer: wallet.contractSigner,
+        orderType: type as 'fixed' | 'dutch', // FIXME:
       });
     },
   });
