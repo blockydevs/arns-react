@@ -10,6 +10,9 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   base: '',
   esbuild: false,
+  server: {
+    allowedHosts: ['living-lark-publicly.ngrok-free.app'],
+  },
   build: {
     sourcemap: true,
     minify: true,
@@ -39,6 +42,7 @@ export default defineConfig({
       : []),
   ],
   define: {
+    'process.env.DEBUG': false,
     __NPM_PACKAGE_VERSION__: JSON.stringify(process.env.npm_package_version),
     'process.env': {
       // DO NOT EXPOSE THE ENTIRE process.env HERE - sensitive information on CI/CD could be exposed.
