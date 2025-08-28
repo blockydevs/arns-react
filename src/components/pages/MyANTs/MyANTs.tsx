@@ -5,7 +5,6 @@ import {
   Header,
   MyANTsTable,
   OwnedDomain,
-  Spinner,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
 import {
@@ -68,27 +67,17 @@ const MyANTs = () => {
     },
   });
 
-  if (queryMyANTs.isPending) {
-    return (
-      <div className="flex justify-center">
-        <Spinner className="text-white size-5" />
-      </div>
-    );
-  }
-
-  if (queryMyANTs.error) {
-    return (
-      <p className="text-error text-center">{queryMyANTs.error.message}</p>
-    );
-  }
-
   return (
     <div className="w-full px-8">
       <Header size="h1" className="my-12">
         My ANTs
       </Header>
       <Card>
-        <MyANTsTable data={queryMyANTs.data} />
+        <MyANTsTable
+          data={queryMyANTs.data ?? []}
+          isPending={queryMyANTs.isPending}
+          error={queryMyANTs.error?.message}
+        />
       </Card>
     </div>
   );
