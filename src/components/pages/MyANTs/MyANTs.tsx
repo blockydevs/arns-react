@@ -38,14 +38,30 @@ const MyANTs = () => {
         (domain): OwnedDomain => ({
           name: domain.name,
           action: () => {
-            navigate(
-              `/my-ants/new-listing/${domain.processId}?name=${domain.name}`,
-            );
+            if (domain.listing) {
+              navigate(`/listing/${domain.listing.orderId}`);
+            } else {
+              navigate(
+                `/my-ants/new-listing/${domain.processId}?name=${domain.name}`,
+              );
+            }
           },
-          endDate: undefined,
-          price: undefined,
-          type: undefined,
-          status: 'idle',
+          endDate: domain.listing
+            ? domain.listing?.expiresAt ?? undefined
+            : undefined,
+          price: domain.listing
+            ? {
+                type: domain.listing.type === 'english' ? 'bid' : 'buyout',
+                symbol: 'ARIO',
+                value: Number(domain.listing.price),
+              }
+            : undefined,
+          type: domain.listing
+            ? {
+                value: domain.listing?.type,
+              }
+            : undefined,
+          status: domain.listing ? 'listed' : 'idle',
         }),
       );
     },
