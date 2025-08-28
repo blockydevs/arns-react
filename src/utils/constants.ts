@@ -266,6 +266,7 @@ export const BLOCKYDEVS_MARKETPLACE_PROCESS_ID =
   'H8UI-IFfoFrnpIsl-MYE4brqRDR2FodL4ICzPklfxw8';
 export const BLOCKYDEVS_SWAP_TOKEN_ID =
   'agYcCFJtrMG6cqMuZfskIkFTGvUPddICmtQSBIoPdiA';
+export const AO_LINK_EXPLORER_URL = 'https://ao.link/#/entity';
 export const marketplaceQueryKeys = {
   myANTs: {
     all: 'my-ants',
