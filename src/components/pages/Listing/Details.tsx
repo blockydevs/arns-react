@@ -1,6 +1,6 @@
 import { fetchListingDetails } from '@blockydevs/arns-marketplace-data';
 import {
-  // BidsTable,
+  BidsTable,
   Button,
   Card,
   DecreaseScheduleTable,
@@ -13,6 +13,7 @@ import {
 } from '@blockydevs/arns-marketplace-ui';
 import { useWalletState } from '@src/state';
 import {
+  AO_LINK_EXPLORER_URL,
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   marketplaceQueryKeys,
 } from '@src/utils/constants';
@@ -52,7 +53,8 @@ const Details = () => {
   }
 
   const isOwner = queryDetails.data.sender === walletAddress;
-  const isSold = false;
+  // FIXME:
+  const isSold = queryDetails.data.status !== 'active';
 
   const navigateToConfirmPurchase = (type: 'fixed' | 'english' | 'dutch') => {
     const orderId = queryDetails.data.orderId;
@@ -65,6 +67,11 @@ const Details = () => {
     );
   };
 
+  const openExplorer = (address: string) => {
+    // FIXME: should come from consts
+    window.open(`${AO_LINK_EXPLORER_URL}/${address}`, '_blank');
+  };
+
   return (
     <div className="max-w-6xl w-full px-6 mx-auto grid md:grid-cols-5 gap-6 py-12">
       <div className="flex flex-col gap-4 md:col-span-3">
@@ -74,6 +81,7 @@ const Details = () => {
         <Card>
           <Paragraph className="mb-5">Metadata</Paragraph>
           <div className="grid grid-cols-2 gap-4">
+            {/* FIXME: add real metadata */}
             <Row label="Metadata label" value="Metadata label" />
             <Row label="Metadata label" value="Metadata label" />
             <Row label="Seller wallet">
@@ -82,8 +90,13 @@ const Details = () => {
                 className="inline-flex w-fit px-0"
                 icon={<ExternalLink width={16} height={16} />}
                 iconPlacement="right"
+                onClick={() => {
+                  openExplorer(queryDetails.data.sender);
+                }}
               >
-                F2F3...dH5
+                {/* FIXME: shorten address */}
+                {queryDetails.data.sender.slice(0, 4)}...
+                {queryDetails.data.sender.slice(-4)}
               </Button>
             </Row>
             <Row label="View on explorer">
@@ -92,8 +105,13 @@ const Details = () => {
                 className="inline-flex w-fit px-0"
                 icon={<ExternalLink width={16} height={16} />}
                 iconPlacement="right"
+                onClick={() => {
+                  openExplorer(queryDetails.data.orderId);
+                }}
               >
-                Oxbd35...2cf8
+                {/* FIXME: shorten address */}
+                {queryDetails.data.orderId.slice(0, 4)}...
+                {queryDetails.data.orderId.slice(-4)}
               </Button>
             </Row>
           </div>
@@ -105,11 +123,13 @@ const Details = () => {
             </Paragraph>
             <DecreaseScheduleTable
               data={calculateDecreaseSchedule(
-                '2025-08-26T00:00:00',
-                '2025-08-28T00:00:00',
-                400,
-                '12hours',
-                700,
+                queryDetails.data.createdAt,
+                // FIXME: it should be required for dutch
+                queryDetails.data.expiresAt ??
+                  new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                Number(queryDetails.data.minimumPrice),
+                '12hours', // FIXME:
+                Number(queryDetails.data.startingPrice),
               )}
             />
           </Card>
@@ -117,10 +137,15 @@ const Details = () => {
       </div>
       <div className="md:col-span-2 flex flex-col gap-4">
         <DetailsCard
-          price={`${queryDetails.data.price} ARIO`}
+          price={`${
+            queryDetails.data.type === 'english'
+              ? queryDetails.data.highestBid
+              : queryDetails.data.price
+          } ARIO`}
           sold={isSold}
-          startDate="2025-08-01T10:00:00Z"
-          endDate="2025-12-01T10:00:00Z"
+          startDate={queryDetails.data.createdAt}
+          // FIXME: should support null here
+          endDate={queryDetails.data.expiresAt}
           variant={
             queryDetails.data.type === 'fixed'
               ? 'fixed-price'
@@ -129,13 +154,21 @@ const Details = () => {
         >
           {queryDetails.data.type === 'dutch' ? (
             <>
-              <Paragraph>Starting price: 300 ARIO</Paragraph>
-              <Paragraph>Floor price: 80 ARIO</Paragraph>
-              <Paragraph>Price decrease: every 24 hours</Paragraph>
+              <Paragraph>
+                Starting price: {queryDetails.data.startingPrice} ARIO
+              </Paragraph>
+              <Paragraph>
+                Floor price: {queryDetails.data.minimumPrice} ARIO
+              </Paragraph>
+              {/* FIXME: format interval */}
+              <Paragraph>
+                Price decrease: every {queryDetails.data.decreaseInterval}
+              </Paragraph>
               <PriceScheduleModal
-                basePrice={700}
-                floorPrice={400}
-                date="2025-08-28T00:00:00"
+                basePrice={Number(queryDetails.data.startingPrice)}
+                floorPrice={Number(queryDetails.data.minimumPrice)}
+                date={queryDetails.data.createdAt}
+                // FIXME: use queryDetails.data.decreaseInterval
                 interval="12hours"
               />
               {!isSold && (
@@ -154,7 +187,9 @@ const Details = () => {
             <>
               {isSold ? (
                 <>
-                  <Paragraph>Starting price: 100 ARIO</Paragraph>
+                  <Paragraph>
+                    Starting price: {queryDetails.data.startingPrice} ARIO
+                  </Paragraph>
                   {isOwner && (
                     <Button variant="primary" className="w-full">
                       Settle now (You won)
@@ -163,12 +198,14 @@ const Details = () => {
                 </>
               ) : (
                 <>
-                  <Paragraph>Starting price: 100 ARIO</Paragraph>
+                  <Paragraph>
+                    Starting price: {queryDetails.data.startingPrice} ARIO
+                  </Paragraph>
                   <Input
                     onChange={(e) => {
                       setBidPrice(e.target.value);
                     }}
-                    placeholder={`${queryDetails.data.price} and up`}
+                    placeholder={`${queryDetails.data.highestBid} and up`}
                     label="Name your price"
                     suffix="ARIO"
                     type="number"
@@ -207,6 +244,7 @@ const Details = () => {
               Buyer
             </Paragraph>
             <Button variant="link" className="px-0">
+              {/* FIXME: receiver address */}
               Wu3...dY4{' '}
               <span className="text-white font-normal text-[var(--ar-color-neutral-400)]">
                 {isOwner && '(Your wallet)'}
@@ -214,48 +252,21 @@ const Details = () => {
             </Button>
           </Card>
         )}
-        {/* FIXME: uncomment later */}
-        {/* {type === 'english' && (
+        {queryDetails.data.type === 'english' && (
           <Card>
             <Paragraph className="text-xl text-[var(--ar-color-neutral-400)] mb-3">
-              Bids (15)
+              Bids ({queryDetails.data.bids.length})
             </Paragraph>
             <BidsTable
-              data={[
-                {
-                  bidder: '0x12349123840',
-                  href: 'https://google.pl',
-                  date: '14-07-2025 14:00',
-                  price: '500 ARIO',
-                },
-                {
-                  bidder: '0x12349123840',
-                  href: 'https://google.pl',
-                  date: '14-07-2025 14:00',
-                  price: '400 ARIO',
-                },
-                {
-                  bidder: '0x12349123840',
-                  href: 'https://google.pl',
-                  date: '14-07-2025 14:00',
-                  price: '200 ARIO',
-                },
-                {
-                  bidder: '0x12349123840',
-                  href: 'https://google.pl',
-                  date: '14-07-2025 14:00',
-                  price: '10 ARIO',
-                },
-                {
-                  bidder: '0x12349123840',
-                  href: 'https://google.pl',
-                  date: '14-07-2025 14:00',
-                  price: '2 ARIO',
-                },
-              ]}
+              data={queryDetails.data.bids.map((bid) => ({
+                bidder: bid.bidder,
+                href: `${AO_LINK_EXPLORER_URL}/${bid.bidder}`,
+                date: new Date().toISOString(),
+                price: bid.amount,
+              }))}
             />
           </Card>
-        )} */}
+        )}
       </div>
     </div>
   );
