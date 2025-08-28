@@ -1532,10 +1532,10 @@
     "@ar.io/sdk" "^3.18.1"
     "@permaweb/aoconnect" "^0.0.87"
 
-"@blockydevs/arns-marketplace-ui@^0.1.76":
-  version "0.1.76"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.76.tgz#1987e12fb81d9b2cd68db1971d76cdb46f9f4573"
-  integrity sha512-pXxaXUZE2wannax9F8W6DCB0YL1J/ufQ6/9DI9za4CIy/BiXNjgJz74yTy3Ry9m+zZRf4DnUlRa61paNqlj+Jg==
+"@blockydevs/arns-marketplace-ui@^0.1.79":
+  version "0.1.79"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.79.tgz#19b03e2941e2eaed078c251263ce6cd93336d024"
+  integrity sha512-O70DF0GldrK7VbHzd9h8kBIhlp0rWSg1SAjPLtWD3H58+ccAij6nf0AR4chJaWzyMWUNom+J+jzNqctOgZWXWg==
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"
