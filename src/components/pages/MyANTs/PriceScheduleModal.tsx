@@ -40,15 +40,17 @@ export const PriceScheduleModal: React.FC<Props> = ({
               Price decrease schedule
             </DialogTitle>
           </DialogHeader>
-          <DecreaseScheduleTable
-            data={calculateDecreaseSchedule(
-              new Date().toString(),
-              date,
-              floorPrice,
-              interval,
-              basePrice,
-            )}
-          />
+          <div className="max-h-[480px] overflow-auto overflow-x-hidden">
+            <DecreaseScheduleTable
+              data={calculateDecreaseSchedule(
+                new Date().toString(),
+                date,
+                floorPrice,
+                interval,
+                basePrice,
+              )}
+            />
+          </div>
         </DialogContent>
       </form>
     </Dialog>
