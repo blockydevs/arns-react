@@ -10,6 +10,7 @@ import {
   DetailsCard,
   Header,
   Input,
+  Pagination,
   Paragraph,
   Row,
   Spinner,
@@ -30,8 +31,11 @@ import { ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+const BIDS_PER_PAGE = 5;
+
 const Details = () => {
   const [bidPrice, setBidPrice] = useState<string | undefined>(undefined);
+  const [bidPage, setBidPage] = useState(1);
   const navigate = useNavigate();
   const { id } = useParams();
   const [{ walletAddress }] = useWalletState();
@@ -62,22 +66,37 @@ const Details = () => {
     );
   }
 
-  const isOwner = queryDetails.data.sender === walletAddress;
-  // FIXME:
-  const isSold = queryDetails.data.status === 'settled';
+  const listing = queryDetails.data;
   const marioPrice =
-    queryDetails.data.type === 'english'
-      ? queryDetails.data.highestBid ?? queryDetails.data.startingPrice
-      : queryDetails.data.price;
+    listing.type === 'english'
+      ? listing.highestBid ?? listing.startingPrice
+      : listing.price;
   const currentPrice = marioToArio(marioPrice);
 
-  const navigateToConfirmPurchase = (type: 'fixed' | 'english' | 'dutch') => {
-    const orderId = queryDetails.data.orderId;
-    const name = queryDetails.data.name;
-    const antProcessId = queryDetails.data.antProcessId;
+  // english type only
+  const allBids =
+    listing.type === 'english'
+      ? listing.bids.map((bid) => ({
+          bidder: bid.bidder,
+          href: `${AO_LINK_EXPLORER_URL}/${bid.bidder}`,
+          date: formatDate(bid.timestamp, 'dd-MM-yyyy HH:mm:ss'),
+          price: marioToArio(bid.amount).toString(),
+        }))
+      : [];
+  // Calculate total pages for bids
+  const totalBidPages = Math.max(1, Math.ceil(allBids.length / BIDS_PER_PAGE));
+  // Calculate start and end indices for the current page
+  const startIndex = (bidPage - 1) * BIDS_PER_PAGE;
+  const endIndex = Math.min(startIndex + BIDS_PER_PAGE, allBids.length);
+  // Create paginated slice of bids
+  const paginatedBids = allBids.slice(startIndex, endIndex);
 
-    const price =
-      type === 'english' ? bidPrice : marioToArio(queryDetails.data.price);
+  const navigateToConfirmPurchase = (type: 'fixed' | 'english' | 'dutch') => {
+    const orderId = listing.orderId;
+    const name = listing.name;
+    const antProcessId = listing.antProcessId;
+
+    const price = type === 'english' ? bidPrice : marioToArio(listing.price);
 
     if (!price) {
       throw new Error('Price is not set');
@@ -98,7 +117,7 @@ const Details = () => {
       <div className="flex flex-col gap-4 lg:col-span-3">
         <Card>
           <Header size="h1" className="break-all">
-            {queryDetails.data.name}
+            {listing.name}
           </Header>
         </Card>
         <Card>
@@ -111,10 +130,10 @@ const Details = () => {
                 icon={<ExternalLink width={16} height={16} />}
                 iconPlacement="right"
                 onClick={() => {
-                  openExplorer(queryDetails.data.sender);
+                  openExplorer(listing.sender);
                 }}
               >
-                {shortenAddress(queryDetails.data.sender)}
+                {shortenAddress(listing.sender)}
               </Button>
             </Row>
             <Row label="View on explorer">
@@ -124,31 +143,33 @@ const Details = () => {
                 icon={<ExternalLink width={16} height={16} />}
                 iconPlacement="right"
                 onClick={() => {
-                  openExplorer(queryDetails.data.orderId);
+                  openExplorer(listing.orderId);
                 }}
               >
-                {shortenAddress(queryDetails.data.orderId)}
+                {shortenAddress(listing.orderId)}
               </Button>
             </Row>
           </div>
         </Card>
-        {queryDetails.data.type === 'dutch' && (
+        {listing.type === 'dutch' && (
           <Card>
             <Paragraph fontWeight="medium" size="large" className="mb-4">
               Price decrease schedule
             </Paragraph>
-            <DecreaseScheduleTable
-              data={calculateDecreaseSchedule(
-                queryDetails.data.createdAt,
-                // FIXME: it should be required for dutch
-                queryDetails.data.expiresAt ??
-                  new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                Number(marioToArio(queryDetails.data.minimumPrice)),
-                getIntervalFromMs(Number(queryDetails.data.decreaseInterval)) ??
-                  '1hour',
-                Number(marioToArio(queryDetails.data.startingPrice)),
-              )}
-            />
+            <div className="max-h-80 overflow-y-auto">
+              <DecreaseScheduleTable
+                data={calculateDecreaseSchedule(
+                  listing.createdAt,
+                  // FIXME: it should be required for dutch
+                  listing.expiresAt ??
+                    new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                  Number(marioToArio(listing.minimumPrice)),
+                  getIntervalFromMs(Number(listing.decreaseInterval)) ??
+                    '1hour',
+                  Number(marioToArio(listing.startingPrice)),
+                )}
+              />
+            </div>
           </Card>
         )}
       </div>
@@ -156,33 +177,29 @@ const Details = () => {
         <DetailsCard
           price={`${currentPrice} ARIO`}
           status={
-            queryDetails.data.status === 'settled'
+            listing.status === 'settled'
               ? 'sold'
-              : queryDetails.data.status === 'expired'
+              : listing.status === 'expired'
               ? 'expired'
               : undefined
           }
-          startDate={queryDetails.data.createdAt}
-          endDate={queryDetails.data.expiresAt}
-          variant={queryDetails.data.type}
+          startDate={listing.createdAt}
+          endDate={listing.expiresAt}
+          variant={listing.type}
         >
-          {queryDetails.data.type === 'dutch' ? (
+          {listing.type === 'dutch' ? (
             <>
               <Paragraph>
-                Starting price: {marioToArio(queryDetails.data.startingPrice)}{' '}
-                ARIO
+                Starting price: {marioToArio(listing.startingPrice)} ARIO
               </Paragraph>
               <Paragraph>
-                Floor price: {marioToArio(queryDetails.data.minimumPrice)} ARIO
+                Floor price: {marioToArio(listing.minimumPrice)} ARIO
               </Paragraph>
-              {/* FIXME: format interval */}
               <Paragraph>
                 Price decrease: every{' '}
-                {formatMillisecondsToDate(
-                  Number(queryDetails.data.decreaseInterval),
-                )}
+                {formatMillisecondsToDate(Number(listing.decreaseInterval))}
               </Paragraph>
-              {!isSold && (
+              {listing.status === 'active' && (
                 <Button
                   variant="primary"
                   className="w-full"
@@ -194,25 +211,23 @@ const Details = () => {
                 </Button>
               )}
             </>
-          ) : queryDetails.data.type === 'english' ? (
+          ) : listing.type === 'english' ? (
             <>
-              {isSold ? (
+              {listing.status === 'settled' ? (
                 <>
                   <Paragraph>
-                    Starting price:{' '}
-                    {marioToArio(queryDetails.data.startingPrice)} ARIO
+                    Starting price: {marioToArio(listing.startingPrice)} ARIO
                   </Paragraph>
-                  {isOwner && (
+                  {listing.receiver === walletAddress && (
                     <Button variant="primary" className="w-full">
                       Settle now (You won)
                     </Button>
                   )}
                 </>
-              ) : (
+              ) : listing.status === 'active' ? (
                 <>
                   <Paragraph>
-                    Starting price:{' '}
-                    {marioToArio(queryDetails.data.startingPrice)} ARIO
+                    Starting price: {marioToArio(listing.startingPrice)} ARIO
                   </Paragraph>
                   <Input
                     type="number"
@@ -240,11 +255,11 @@ const Details = () => {
                       : 'Too small bid'}
                   </Button>
                 </>
-              )}
+              ) : null}
             </>
           ) : (
             <>
-              {!isSold && (
+              {listing.status === 'active' && (
                 <Button
                   variant="primary"
                   className="w-full"
@@ -258,32 +273,34 @@ const Details = () => {
             </>
           )}
         </DetailsCard>
-        {queryDetails.data.status === 'settled' && (
+        {listing.status === 'settled' && (
           <Card>
             <Paragraph className="text-xl text-[var(--ar-color-neutral-400)] mb-2">
               Buyer
             </Paragraph>
             <Button variant="link" className="px-0">
-              {shortenAddress(queryDetails.data.receiver)}
+              {shortenAddress(listing.receiver)}
               <span className="text-white font-normal text-[var(--ar-color-neutral-400)]">
-                {isOwner && '(Your wallet)'}
+                {listing.receiver === walletAddress && '(Your wallet)'}
               </span>
             </Button>
           </Card>
         )}
-        {queryDetails.data.type === 'english' && (
+        {listing.type === 'english' && (
           <Card>
             <Paragraph className="text-xl text-[var(--ar-color-neutral-400)] mb-3">
-              Bids ({queryDetails.data.bids.length})
+              Bids ({listing.bids.length})
             </Paragraph>
-            <BidsTable
-              data={queryDetails.data.bids.map((bid) => ({
-                bidder: bid.bidder,
-                href: `${AO_LINK_EXPLORER_URL}/${bid.bidder}`,
-                date: formatDate(bid.timestamp, 'dd-MM-yyyy HH:mm:ss'),
-                price: marioToArio(bid.amount).toString(),
-              }))}
-            />
+            <div className="mb-3">
+              <BidsTable data={paginatedBids} />
+            </div>
+            {!queryDetails.isPending && (
+              <Pagination
+                totalPages={totalBidPages}
+                activeIndex={bidPage}
+                onPageChange={setBidPage}
+              />
+            )}
           </Card>
         )}
       </div>
