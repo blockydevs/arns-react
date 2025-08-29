@@ -153,7 +153,13 @@ const Details = () => {
       <div className="lg:col-span-2 flex flex-col gap-4">
         <DetailsCard
           price={`${currentPrice} ARIO`}
-          sold={isSold}
+          status={
+            queryDetails.data.status === 'settled'
+              ? 'sold'
+              : queryDetails.data.status === 'expired'
+              ? 'expired'
+              : undefined
+          }
           startDate={queryDetails.data.createdAt}
           endDate={queryDetails.data.expiresAt}
           variant={queryDetails.data.type}
