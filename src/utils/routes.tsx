@@ -1,5 +1,6 @@
+import Prices from '@src/components/pages/Prices/Prices';
 import RNPPage from '@src/components/pages/RNPPage/RNPPage';
-import { Bolt, CalendarRange, Gavel } from 'lucide-react';
+import { Bolt, CalendarRange, CircleDollarSignIcon, Gavel } from 'lucide-react';
 
 import { Home, Listing, Manage } from '../components/pages';
 
@@ -16,6 +17,12 @@ const WrapperCalendarRangeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
   props,
 ) => {
   return <CalendarRange {...props} />;
+};
+
+const WrappedDollarSignIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
+  props,
+) => {
+  return <CircleDollarSignIcon {...props} />;
 };
 
 export type Route = {
@@ -35,6 +42,14 @@ export const ROUTES: { [x: string]: Route } = {
     component: Home,
     protected: false,
     index: true,
+  },
+  prices: {
+    text: 'Prices',
+    icon: WrappedDollarSignIcon,
+    path: '/prices',
+    component: Prices,
+    protected: false,
+    index: false,
   },
   returnedNames: {
     text: 'Returned Names',

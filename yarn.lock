@@ -111,25 +111,7 @@
     winston "^3.13.0"
     zod "^3.23.8"
 
-"@ar.io/sdk@^3.18.0":
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/@ar.io/sdk/-/sdk-3.18.0.tgz#e84e1dc3c4d4e0a9442d7121767af87fd0374d1d"
-  integrity sha512-EvjiqlhUSZHLElRvysTvLPKX0VIfHs/+mjRG6/eO+xHCsOahIrY7x4vxYKQQbzX9vQXuAn+VbvUdaMsb51jBUg==
-  dependencies:
-    "@dha-team/arbundles" "^1.0.1"
-    "@permaweb/aoconnect" "0.0.68"
-    arweave "1.15.5"
-    axios "1.8.4"
-    axios-retry "^4.3.0"
-    commander "^12.1.0"
-    eventemitter3 "^5.0.1"
-    plimit-lit "^3.0.1"
-    prompts "^2.4.2"
-    uuid "^11.1.0"
-    winston "^3.13.0"
-    zod "^3.23.8"
-
-"@ar.io/sdk@^3.18.1":
+"@ar.io/sdk@^3.18.1", "@ar.io/sdk@^3.18.3":
   version "3.18.3"
   resolved "https://registry.yarnpkg.com/@ar.io/sdk/-/sdk-3.18.3.tgz#5a19b386db0a685aa3b07ef43e06a44d714e40d4"
   integrity sha512-RA2wXmSbKkn5uRgTwpA0j+FrkEWs7b21ZPK1AmFm24qKFCtkaXURC5V5xtBsNveh+0vh/O0xxNA2WTsmTO/3yA==
@@ -1527,7 +1509,7 @@
 "@blockydevs/arns-marketplace-data@^0.1.44":
   version "0.1.44"
   resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.44.tgz#03113c185c15af8b91817c7aaf1acc0cbe7e197d"
-  integrity sha512-kcUv8M2vqdUW2GSJcA2BYUg1994TkflZhFsLSbAD51EhyEQTso8HBi0/ZTgHBW54LT85QVF+GMw8tSOMmJJEQw==
+  integrity "sha1-LJoEJ0upQhXp31RJ30vpE4JXhSg= sha512-uYZpxbm0BacbsDE72qSamsqLVZA7CaPanM8cMKXJD5SX32Q1sqKiYtxSkLGkY/EDAkZmmKg/xAI3K6eSEFNedg=="
   dependencies:
     "@ar.io/sdk" "^3.18.1"
     "@permaweb/aoconnect" "^0.0.87"
@@ -1535,7 +1517,7 @@
 "@blockydevs/arns-marketplace-ui@^0.1.79":
   version "0.1.79"
   resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.79.tgz#19b03e2941e2eaed078c251263ce6cd93336d024"
-  integrity sha512-O70DF0GldrK7VbHzd9h8kBIhlp0rWSg1SAjPLtWD3H58+ccAij6nf0AR4chJaWzyMWUNom+J+jzNqctOgZWXWg==
+  integrity "sha1-63lChpRFEsaAR3/lhtgWnbXoePE= sha512-YpQ8WPtbVe/Qc6aGIQYmj/uNbQatUmjA9afkKy0+6XMaSGTjjxc1eUA8Owzuau3ifL7eWrIP1TcUXNMPgPNlsQ=="
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"
