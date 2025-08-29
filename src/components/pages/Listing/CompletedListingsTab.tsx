@@ -8,34 +8,38 @@ import {
   type Domain,
   Pagination,
 } from '@blockydevs/arns-marketplace-ui';
+import { useCursorPagination } from '@src/components/pages/Listing/ActiveListingsTab';
 import { useGlobalState } from '@src/state';
 import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   marketplaceQueryKeys,
 } from '@src/utils/constants';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const PAGE_SIZE = 10;
 
 const CompletedListingsTab = () => {
-  const [page, setPage] = useState(1);
   const navigate = useNavigate();
   const [{ aoClient }] = useGlobalState();
+  const pagination = useCursorPagination(PAGE_SIZE);
 
   const queryCompletedListings = useQuery({
     queryKey: marketplaceQueryKeys.listings.list('completed', {
-      pageSize: PAGE_SIZE,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
     }),
     queryFn: () => {
       return fetchCompletedListings({
         ao: aoClient,
         activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
-        limit: PAGE_SIZE,
+        limit: pagination.pageSize,
+        cursor: pagination.cursor,
       });
     },
     select: (data) => {
+      pagination.storeNextCursor(data.nextCursor, !!data.hasMore);
+
       return {
         ...data,
         items: data.items.map(
@@ -60,10 +64,8 @@ const CompletedListingsTab = () => {
     },
   });
 
-  const totalItems = queryCompletedListings.data?.totalItems ?? 1;
-  const limit = queryCompletedListings.data?.limit ?? 1;
-
-  const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+  const { totalItems, hasMore } = queryCompletedListings.data ?? {};
+  const totalPages = pagination.getTotalPages(totalItems, hasMore);
 
   return (
     <Card className="flex flex-col gap-8">
@@ -75,8 +77,8 @@ const CompletedListingsTab = () => {
       {!queryCompletedListings.isPending && (
         <Pagination
           totalPages={totalPages}
-          activeIndex={page}
-          onPageChange={setPage}
+          activeIndex={pagination.page}
+          onPageChange={pagination.setPage}
         />
       )}
     </Card>
