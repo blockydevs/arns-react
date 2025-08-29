@@ -21,6 +21,7 @@ import {
   BLOCKYDEVS_SWAP_TOKEN_ID,
   marketplaceQueryKeys,
 } from '@src/utils/constants';
+import eventEmitter from '@src/utils/events';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addMilliseconds } from 'date-fns';
 import { useState } from 'react';
@@ -450,8 +451,9 @@ function MyANTsNewListing() {
                     else {
                       mutation.mutate(undefined, {
                         onError: (error) => {
-                          console.error(error);
-                          window.alert(error.message);
+                          eventEmitter.emit('error', {
+                            message: error.message,
+                          });
                         },
                         onSuccess: async (data) => {
                           console.log('listing created', { data });
