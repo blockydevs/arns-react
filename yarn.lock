@@ -111,7 +111,7 @@
     winston "^3.13.0"
     zod "^3.23.8"
 
-"@ar.io/sdk@^3.18.1", "@ar.io/sdk@^3.18.3":
+"@ar.io/sdk@^3.18.3":
   version "3.18.3"
   resolved "https://registry.yarnpkg.com/@ar.io/sdk/-/sdk-3.18.3.tgz#5a19b386db0a685aa3b07ef43e06a44d714e40d4"
   integrity sha512-RA2wXmSbKkn5uRgTwpA0j+FrkEWs7b21ZPK1AmFm24qKFCtkaXURC5V5xtBsNveh+0vh/O0xxNA2WTsmTO/3yA==
@@ -1506,13 +1506,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blockydevs/arns-marketplace-data@^0.1.45":
-  version "0.1.45"
-  resolved "https://living-lark-publicly.ngrok-free.app/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.45.tgz#2e4a879202aa588fda258ebecb44b2bc2b47a792"
-  integrity sha512-1PsVF6OkuIyzH0KWxbhq1QqHVj57FGQ6q8StNBC0tUVZxrb/q1lIkT2SEzMvMwuklWwg5eOcL6Q4dFInFGeuoA==
-  dependencies:
-    "@ar.io/sdk" "^3.18.1"
-    "@permaweb/aoconnect" "^0.0.87"
+"@blockydevs/arns-marketplace-data@^0.1.46":
+  version "0.1.46"
+  resolved "https://living-lark-publicly.ngrok-free.app/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.46.tgz#0b767fda2b84e933a47d422f2d93399b9d45481e"
+  integrity sha512-d5Duq6K+MVXC1vH+HS6JY2WImW7i0at7yNMCVZrK2kz/DFnBjkaWgvhjJnnl9tLGeBKfsEGHMm46eCXv2rwxlA==
 
 "@blockydevs/arns-marketplace-ui@^0.1.79":
   version "0.1.79"
@@ -3729,25 +3726,6 @@
   version "0.0.85"
   resolved "https://registry.yarnpkg.com/@permaweb/aoconnect/-/aoconnect-0.0.85.tgz#3e8685d39ec1df91ff68b619ecd3a75168c6b6b0"
   integrity sha512-lPfDLDaQyOY1oupxkw9B9ZslKw1ENASEdzComoMc2RZ7DejBx2OdHzU+fmZO1ZEQ5zQSm82/wgRVBd/1l6092g==
-  dependencies:
-    "@dha-team/arbundles" "1.0.3"
-    "@permaweb/ao-scheduler-utils" "~0.0.25"
-    "@permaweb/protocol-tag-utils" "~0.0.2"
-    axios "^1.7.9"
-    base64url "^3.0.1"
-    buffer "^6.0.3"
-    debug "^4.4.0"
-    http-message-signatures "^1.0.4"
-    hyper-async "^1.1.2"
-    mnemonist "^0.39.8"
-    ramda "^0.30.1"
-    structured-headers "^2.0.0"
-    zod "^3.24.1"
-
-"@permaweb/aoconnect@^0.0.87":
-  version "0.0.87"
-  resolved "https://registry.yarnpkg.com/@permaweb/aoconnect/-/aoconnect-0.0.87.tgz#8b12bc080c95effbc1fbf14218f50c129bad8a78"
-  integrity sha512-RjUdYGT+mqPSlOHZuda5sytYUB4iZXdCsLAb8R6MxoFD/Lb/rVAqzolD0roBA5r9GpUCjjvGppf1zalmmxT6AQ==
   dependencies:
     "@dha-team/arbundles" "1.0.3"
     "@permaweb/ao-scheduler-utils" "~0.0.25"

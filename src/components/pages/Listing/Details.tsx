@@ -62,12 +62,12 @@ const Details = () => {
 
   const isOwner = queryDetails.data.sender === walletAddress;
   // FIXME:
-  const isSold = queryDetails.data.status !== 'active';
+  const isSold = queryDetails.data.status === 'settled';
   const marioPrice =
     queryDetails.data.type === 'english'
-      ? queryDetails.data.highestBid
+      ? queryDetails.data.highestBid ?? queryDetails.data.startingPrice
       : queryDetails.data.price;
-  const price = marioToArio(marioPrice);
+  const currentPrice = marioToArio(marioPrice);
 
   const navigateToConfirmPurchase = (type: 'fixed' | 'english' | 'dutch') => {
     const orderId = queryDetails.data.orderId;
@@ -100,9 +100,6 @@ const Details = () => {
         <Card>
           <Paragraph className="mb-5">Metadata</Paragraph>
           <div className="grid grid-cols-2 gap-4">
-            {/* FIXME: add real metadata */}
-            <Row label="Metadata label" value="Metadata label" />
-            <Row label="Metadata label" value="Metadata label" />
             <Row label="Seller wallet">
               <Button
                 variant="link"
@@ -152,7 +149,7 @@ const Details = () => {
       </div>
       <div className="md:col-span-2 flex flex-col gap-4">
         <DetailsCard
-          price={`${price} ARIO`}
+          price={`${currentPrice} ARIO`}
           sold={isSold}
           startDate={queryDetails.data.createdAt}
           endDate={queryDetails.data.expiresAt}
@@ -207,9 +204,7 @@ const Details = () => {
                     onChange={(e) => {
                       setBidPrice(e.target.value);
                     }}
-                    placeholder={`${marioToArio(
-                      queryDetails.data.highestBid,
-                    )} and up`}
+                    placeholder={`${currentPrice} and up`}
                     label="Name your price"
                     suffix="ARIO"
                     type="number"
@@ -248,14 +243,13 @@ const Details = () => {
             </>
           )}
         </DetailsCard>
-        {isSold && (
+        {queryDetails.data.status === 'settled' && (
           <Card>
             <Paragraph className="text-xl text-[var(--ar-color-neutral-400)] mb-2">
               Buyer
             </Paragraph>
             <Button variant="link" className="px-0">
-              {/* FIXME: receiver address */}
-              Wu3...dY4{' '}
+              {shortenAddress(queryDetails.data.receiver)}
               <span className="text-white font-normal text-[var(--ar-color-neutral-400)]">
                 {isOwner && '(Your wallet)'}
               </span>
