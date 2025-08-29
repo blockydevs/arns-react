@@ -1514,7 +1514,7 @@
 "@blockydevs/arns-marketplace-ui@^0.1.85":
   version "0.1.85"
   resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.85.tgz#492f3acdc6f4a06ce9021458ae5a9671e6fe2ec6"
-  integrity sha512-Sc9i4Fs8Xy6J2/qxr7x/ijdhzc4jHvByRlJnP5hydWsAfOuIIZHKS4pLVQ4vkNOTDSolBlHffJ5YDqCoQDvYrQ==
+  integrity "sha1-vyCGn5+B1uLy/0eGllxTAFpQzNE= sha512-1s2dLpKQmjO4fl13OM4i6j+pT7NbH1NeQWDz1euMe4z2M+Oz+fZLD+D0TVY5fFnsQwE7G+WrrpkqocW3b0Ab3w=="
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"

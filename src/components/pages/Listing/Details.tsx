@@ -75,13 +75,13 @@ const Details = () => {
     const orderId = queryDetails.data.orderId;
     const name = queryDetails.data.name;
     const antProcessId = queryDetails.data.antProcessId;
-    const marioPrice = type === 'english' ? bidPrice : queryDetails.data.price;
 
-    if (!marioPrice) {
+    const price =
+      type === 'english' ? bidPrice : marioToArio(queryDetails.data.price);
+
+    if (!price) {
       throw new Error('Price is not set');
     }
-
-    const price = marioToArio(marioPrice);
 
     navigate(
       `/listing/${orderId}/confirm-purchase?price=${price}&type=${type}&name=${name}&antProcessId=${antProcessId}`,
