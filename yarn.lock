@@ -1508,13 +1508,13 @@
 
 "@blockydevs/arns-marketplace-data@^0.1.50":
   version "0.1.50"
-  resolved "https://living-lark-publicly.ngrok-free.app/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.50.tgz#8b6528ddca3d70870792045607a1167f45890cfe"
-  integrity sha512-mMocB2taNQkYqSzjyJbyx0O3pNwq5FJ7xzF2cJwUcjxLhtOHfdocf+AzCVvZ8l3nXl4pqfU1M4ziMBU3J8OWLw==
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.50.tgz#b739237ea232f9e190bc3e8ab69735e00f936736"
+  integrity sha512-Kx9VzhFSJo9Dw9brvjfCJfuDpTFPZsTNt+BcyUxDD/c23UWbIFXUX+2+EPmLyt5HhgBvS6TeYacyIjh3vsodnA==
 
-"@blockydevs/arns-marketplace-ui@^0.1.84":
-  version "0.1.84"
-  resolved "https://living-lark-publicly.ngrok-free.app/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.84.tgz#080a944b5d4fa901dd5af40f1b90d66667c8ec64"
-  integrity sha512-h9ld+K0xL1oEeYJqxvD1uwiksvORZf+DAZX5JM/8ZIkmjNuYwoW4pRXRMLZRF3CD3srmK/chp1JpWzG1f1OQVQ==
+"@blockydevs/arns-marketplace-ui@^0.1.85":
+  version "0.1.85"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.85.tgz#492f3acdc6f4a06ce9021458ae5a9671e6fe2ec6"
+  integrity sha512-Sc9i4Fs8Xy6J2/qxr7x/ijdhzc4jHvByRlJnP5hydWsAfOuIIZHKS4pLVQ4vkNOTDSolBlHffJ5YDqCoQDvYrQ==
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"

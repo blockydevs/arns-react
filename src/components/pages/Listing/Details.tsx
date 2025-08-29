@@ -16,6 +16,7 @@ import {
   calculateDecreaseSchedule,
   formatDate,
   formatMillisecondsToDate,
+  getIntervalFromMs,
   shortenAddress,
 } from '@blockydevs/arns-marketplace-ui';
 import { useWalletState } from '@src/state';
@@ -143,7 +144,8 @@ const Details = () => {
                 queryDetails.data.expiresAt ??
                   new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
                 marioToArio(queryDetails.data.minimumPrice),
-                '12hours', // FIXME:
+                getIntervalFromMs(Number(queryDetails.data.decreaseInterval)) ??
+                  '1hour',
                 marioToArio(queryDetails.data.startingPrice),
               )}
             />
