@@ -142,9 +142,9 @@ const Details = () => {
                 // FIXME: it should be required for dutch
                 queryDetails.data.expiresAt ??
                   new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                marioToArio(queryDetails.data.minimumPrice),
+                Number(marioToArio(queryDetails.data.minimumPrice)),
                 '12hours', // FIXME:
-                marioToArio(queryDetails.data.startingPrice),
+                Number(marioToArio(queryDetails.data.startingPrice)),
               )}
             />
           </Card>
@@ -213,26 +213,27 @@ const Details = () => {
                     {marioToArio(queryDetails.data.startingPrice)} ARIO
                   </Paragraph>
                   <Input
+                    type="number"
+                    value={bidPrice}
                     onChange={(e) => {
                       setBidPrice(e.target.value);
                     }}
                     placeholder={`${currentPrice} and up`}
                     label="Name your price"
                     suffix="ARIO"
-                    type="number"
                   />
                   <Button
                     variant="primary"
                     className="w-full"
                     disabled={
                       bidPrice === undefined ||
-                      Number(bidPrice) < Number(queryDetails.data.highestBid)
+                      Number(bidPrice) < Number(currentPrice)
                     }
                     onClick={() => {
                       navigateToConfirmPurchase('english');
                     }}
                   >
-                    {Number(bidPrice) > Number(queryDetails.data.highestBid)
+                    {Number(bidPrice) > Number(currentPrice)
                       ? 'Place bid'
                       : 'Too small bid'}
                   </Button>

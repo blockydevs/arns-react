@@ -50,7 +50,7 @@ const CompletedListingsTab = () => {
             price: {
               type: item.type === 'english' ? 'bid' : 'buyout',
               symbol: 'ARIO',
-              value: marioToArio(item.price),
+              value: Number(marioToArio(item.price)),
             },
             type: {
               value: item.type,
