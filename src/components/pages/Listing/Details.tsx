@@ -14,6 +14,7 @@ import {
   Row,
   Spinner,
   calculateDecreaseSchedule,
+  formatDate,
   shortenAddress,
 } from '@blockydevs/arns-marketplace-ui';
 import { useWalletState } from '@src/state';
@@ -270,7 +271,7 @@ const Details = () => {
               data={queryDetails.data.bids.map((bid) => ({
                 bidder: bid.bidder,
                 href: `${AO_LINK_EXPLORER_URL}/${bid.bidder}`,
-                date: new Date().toISOString(),
+                date: formatDate(bid.timestamp, 'dd-MM-yyyy HH:mm:ss'),
                 price: marioToArio(bid.amount).toString(),
               }))}
             />
