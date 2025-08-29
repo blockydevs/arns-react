@@ -92,10 +92,12 @@ const Details = () => {
   };
 
   return (
-    <div className="max-w-6xl w-full px-6 mx-auto grid md:grid-cols-5 gap-6 py-12">
-      <div className="flex flex-col gap-4 md:col-span-3">
+    <div className="max-w-6xl w-full px-6 mx-auto grid lg:grid-cols-5 gap-6 py-12">
+      <div className="flex flex-col gap-4 lg:col-span-3">
         <Card>
-          <Header size="h1">{queryDetails.data.name}</Header>
+          <Header size="h1" className="break-all">
+            {queryDetails.data.name}
+          </Header>
         </Card>
         <Card>
           <Paragraph className="mb-5">Metadata</Paragraph>
@@ -147,7 +149,7 @@ const Details = () => {
           </Card>
         )}
       </div>
-      <div className="md:col-span-2 flex flex-col gap-4">
+      <div className="lg:col-span-2 flex flex-col gap-4">
         <DetailsCard
           price={`${currentPrice} ARIO`}
           sold={isSold}
