@@ -126,7 +126,9 @@ const Confirm = () => {
               <Button
                 variant="primary"
                 size="small"
-                onClick={() => navigate(`/listing/${listingId}`)}
+                onClick={() =>
+                  navigate(listingId ? `/listing/${listingId}` : '/listing')
+                }
               >
                 View listing
               </Button>
@@ -145,7 +147,9 @@ const Confirm = () => {
               <Button
                 variant="secondary"
                 className="w-full"
-                onClick={() => navigate(`/listing/${listingId}`)}
+                onClick={() =>
+                  navigate(listingId ? `/listing/${listingId}` : '/listing')
+                }
               >
                 View this listing
               </Button>
@@ -169,7 +173,7 @@ const Confirm = () => {
         title="Confirm purchase"
         className="w-full my-12"
         onGoBack={() => {
-          navigate('/my-ants');
+          navigate(listingId ? `/listing/${listingId}` : '/listing');
         }}
       />
       <div className="max-w-2xl w-full px-6 mx-auto pb-12">
@@ -180,9 +184,9 @@ const Confirm = () => {
             <Button
               variant="outline"
               size="small"
-              // onClick={() => {
-              //  navigate()
-              // }}
+              onClick={() => {
+                navigate(listingId ? `/listing/${listingId}` : '/listing');
+              }}
             >
               Cancel
             </Button>

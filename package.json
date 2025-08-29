@@ -29,7 +29,7 @@
     "@ar.io/wayfinder-core": "^1.0.4",
     "@ar.io/wayfinder-react": "^1.0.11",
     "@ardrive/turbo-sdk": "^1.23.1",
-    "@blockydevs/arns-marketplace-data": "^0.1.44",
+    "@blockydevs/arns-marketplace-data": "^0.1.45",
     "@blockydevs/arns-marketplace-ui": "^0.1.79",
     "@permaweb/aoconnect": "0.0.69",
     "@radix-ui/react-checkbox": "^1.1.4",
