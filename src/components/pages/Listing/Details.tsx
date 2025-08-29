@@ -16,6 +16,7 @@ import {
   calculateDecreaseSchedule,
   formatDate,
   formatMillisecondsToDate,
+  getIntervalFromMs,
   shortenAddress,
 } from '@blockydevs/arns-marketplace-ui';
 import { useWalletState } from '@src/state';
@@ -142,9 +143,10 @@ const Details = () => {
                 // FIXME: it should be required for dutch
                 queryDetails.data.expiresAt ??
                   new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                Number(marioToArio(queryDetails.data.minimumPrice)),
-                '12hours', // FIXME:
-                Number(marioToArio(queryDetails.data.startingPrice)),
+                marioToArio(queryDetails.data.minimumPrice),
+                getIntervalFromMs(Number(queryDetails.data.decreaseInterval)) ??
+                  '1hour',
+                marioToArio(queryDetails.data.startingPrice),
               )}
             />
           </Card>
