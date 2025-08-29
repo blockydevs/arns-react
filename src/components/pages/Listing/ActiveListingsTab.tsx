@@ -56,7 +56,6 @@ export function useCursorPagination(pageSize = 10) {
 
   // Change page - only allows navigation to known pages
   const handlePageChange = (newPage: number) => {
-    console.log(cursorsRef.current, newPage in cursorsRef.current);
     // Don't allow navigation to unknown pages (except next page if hasMore)
     if (newPage in cursorsRef.current || newPage === 1) {
       setPage(newPage);
@@ -103,7 +102,7 @@ const ActiveListingsTab = () => {
             price: {
               type: item.type === 'english' ? 'bid' : 'buyout',
               symbol: 'ARIO',
-              value: marioToArio(item.price),
+              value: Number(marioToArio(item.price)),
             },
             type: {
               value: item.type,
