@@ -15,6 +15,7 @@ import {
   Spinner,
   calculateDecreaseSchedule,
   formatDate,
+  formatMillisecondsToDate,
   shortenAddress,
 } from '@blockydevs/arns-marketplace-ui';
 import { useWalletState } from '@src/state';
@@ -168,7 +169,10 @@ const Details = () => {
               </Paragraph>
               {/* FIXME: format interval */}
               <Paragraph>
-                Price decrease: every {queryDetails.data.decreaseInterval}
+                Price decrease: every{' '}
+                {formatMillisecondsToDate(
+                  Number(queryDetails.data.decreaseInterval),
+                )}
               </Paragraph>
               {!isSold && (
                 <Button
