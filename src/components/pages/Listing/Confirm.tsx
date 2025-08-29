@@ -13,6 +13,7 @@ import {
   BLOCKYDEVS_SWAP_TOKEN_ID,
   marketplaceQueryKeys,
 } from '@src/utils/constants';
+import eventEmitter from '@src/utils/events';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -209,7 +210,9 @@ const Confirm = () => {
                   { price },
                   {
                     onError: (error) => {
-                      window.alert(error.message);
+                      eventEmitter.emit('error', {
+                        message: error.message,
+                      });
                     },
                     onSuccess: async (data) => {
                       console.log(`${operation} success`, { data });
