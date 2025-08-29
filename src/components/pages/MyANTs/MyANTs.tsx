@@ -53,7 +53,7 @@ const MyANTs = () => {
             ? {
                 type: domain.listing.type === 'english' ? 'bid' : 'buyout',
                 symbol: 'ARIO',
-                value: marioToArio(domain.listing.price),
+                value: Number(marioToArio(domain.listing.price)),
               }
             : undefined,
           type: domain.listing
