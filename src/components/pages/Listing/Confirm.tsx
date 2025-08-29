@@ -117,7 +117,7 @@ const Confirm = () => {
               <Paragraph className="ar:text-neutral-400 text-center">
                 Domain name
               </Paragraph>
-              <Paragraph className="text-5xl font-medium text-white text-center">
+              <Paragraph className="text-5xl font-medium text-white text-center break-words">
                 {name}
               </Paragraph>
             </div>
