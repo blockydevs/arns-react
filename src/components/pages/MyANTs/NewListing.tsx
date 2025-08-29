@@ -392,13 +392,12 @@ function MyANTsNewListing() {
                     label="Price decrease interval"
                     value={`Every ${decrease}`}
                   />
-                  <Button
-                    variant="link"
-                    size="small"
-                    className="inline-flex w-fit px-0"
-                  >
-                    View price schedule
-                  </Button>
+                  <PriceScheduleModal
+                    basePrice={Number(price)}
+                    floorPrice={Number(minimumPrice)}
+                    date={endDate}
+                    interval={decrease as Interval}
+                  />
                 </>
               ) : type === 'english' ? (
                 <>
