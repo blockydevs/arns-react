@@ -7,8 +7,8 @@ import {
   CompletedListingTable,
   type Domain,
   Pagination,
+  useCursorPagination,
 } from '@blockydevs/arns-marketplace-ui';
-import { useCursorPagination } from '@src/components/pages/Listings/ActiveListingsTab';
 import { useGlobalState } from '@src/state';
 import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
@@ -64,8 +64,8 @@ const CompletedListingsTab = () => {
     },
   });
 
-  const { totalItems, hasMore } = queryCompletedListings.data ?? {};
-  const totalPages = pagination.getTotalPages(totalItems, hasMore);
+  const { totalItems } = queryCompletedListings.data ?? {};
+  const totalPages = pagination.getTotalPages(totalItems);
 
   return (
     <Card className="flex flex-col gap-8">
