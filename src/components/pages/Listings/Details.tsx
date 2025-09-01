@@ -103,7 +103,7 @@ const Details = () => {
     }
 
     navigate(
-      `/listing/${orderId}/confirm-purchase?price=${price}&type=${type}&name=${name}&antProcessId=${antProcessId}`,
+      `/listings/${orderId}/confirm-purchase?price=${price}&type=${type}&name=${name}&antProcessId=${antProcessId}`,
     );
   };
 

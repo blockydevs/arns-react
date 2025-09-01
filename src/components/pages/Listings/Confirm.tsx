@@ -128,7 +128,7 @@ const Confirm = () => {
                 variant="primary"
                 size="small"
                 onClick={() =>
-                  navigate(listingId ? `/listing/${listingId}` : '/listing')
+                  navigate(listingId ? `/listings/${listingId}` : '/listings')
                 }
               >
                 View listing
@@ -149,7 +149,7 @@ const Confirm = () => {
                 variant="secondary"
                 className="w-full"
                 onClick={() =>
-                  navigate(listingId ? `/listing/${listingId}` : '/listing')
+                  navigate(listingId ? `/listings/${listingId}` : '/listings')
                 }
               >
                 View this listing
@@ -174,7 +174,7 @@ const Confirm = () => {
         title="Confirm purchase"
         className="w-full my-12"
         onGoBack={() => {
-          navigate(listingId ? `/listing/${listingId}` : '/listing');
+          navigate(listingId ? `/listings/${listingId}` : '/listings');
         }}
       />
       <div className="max-w-2xl w-full px-6 mx-auto pb-12">
@@ -186,7 +186,7 @@ const Confirm = () => {
               variant="outline"
               size="small"
               onClick={() => {
-                navigate(listingId ? `/listing/${listingId}` : '/listing');
+                navigate(listingId ? `/listings/${listingId}` : '/listings');
               }}
             >
               Cancel

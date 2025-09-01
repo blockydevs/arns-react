@@ -5,10 +5,10 @@ import {
   TabsList,
   TabsTrigger,
 } from '@blockydevs/arns-marketplace-ui';
-import ActiveListingsTab from '@src/components/pages/Listing/ActiveListingsTab';
-import CompletedListingsTab from '@src/components/pages/Listing/CompletedListingsTab';
+import ActiveListingsTab from '@src/components/pages/Listings/ActiveListingsTab';
+import CompletedListingsTab from '@src/components/pages/Listings/CompletedListingsTab';
 
-const Listing = () => {
+const Listings = () => {
   return (
     <div className="w-full px-8">
       <Header size="h1" className="my-12">
@@ -30,4 +30,4 @@ const Listing = () => {
   );
 };
 
-export default Listing;
+export default Listings;
