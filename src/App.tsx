@@ -32,9 +32,11 @@ const MyANTsNewListing = React.lazy(
 const Manage = React.lazy(() => import('./components/pages/Manage/Manage'));
 const Home = React.lazy(() => import('./components/pages/Home/Home'));
 
-const Listing = React.lazy(() => import('./components/pages/Listing/Listing'));
-const Details = React.lazy(() => import('./components/pages/Listing/Details'));
-const Confirm = React.lazy(() => import('./components/pages/Listing/Confirm'));
+const Listings = React.lazy(
+  () => import('./components/pages/Listings/Listings'),
+);
+const Details = React.lazy(() => import('./components/pages/Listings/Details'));
+const Confirm = React.lazy(() => import('./components/pages/Listings/Confirm'));
 
 const ManageANT = React.lazy(
   () => import('./components/pages/ManageANT/ManageANT'),
@@ -346,19 +348,19 @@ function App() {
             }
           />
           <Route
-            path="/listing"
+            path="/listings"
             element={
               <Suspense
                 fallback={
                   <PageLoader loading={true} message={'Loading, please wait'} />
                 }
               >
-                <Listing />
+                <Listings />
               </Suspense>
             }
           />
           <Route
-            path="/listing/:id"
+            path="/listings/:id"
             element={
               <Suspense
                 fallback={
@@ -370,7 +372,7 @@ function App() {
             }
           />
           <Route
-            path="/listing/:id/confirm-purchase"
+            path="/listings/:id/confirm-purchase"
             element={
               <Suspense
                 fallback={

@@ -8,7 +8,7 @@ import {
   type Domain,
   Pagination,
 } from '@blockydevs/arns-marketplace-ui';
-import { useCursorPagination } from '@src/components/pages/Listing/ActiveListingsTab';
+import { useCursorPagination } from '@src/components/pages/Listings/ActiveListingsTab';
 import { useGlobalState } from '@src/state';
 import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
@@ -56,7 +56,7 @@ const CompletedListingsTab = () => {
               value: item.type,
             },
             action: () => {
-              navigate(`/listing/${item.orderId}`);
+              navigate(`/listings/${item.orderId}`);
             },
           }),
         ),

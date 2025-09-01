@@ -108,7 +108,7 @@ const ActiveListingsTab = () => {
               value: item.type,
             },
             action: () => {
-              navigate(`/listing/${item.orderId}`);
+              navigate(`/listings/${item.orderId}`);
             },
           }),
         ),
