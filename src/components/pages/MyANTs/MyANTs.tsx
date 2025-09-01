@@ -39,7 +39,7 @@ const MyANTs = () => {
           name: domain.name,
           action: () => {
             if (domain.listing) {
-              navigate(`/listing/${domain.listing.orderId}`);
+              navigate(`/listings/${domain.listing.orderId}`);
             } else {
               navigate(
                 `/my-ants/new-listing/${domain.processId}?name=${domain.name}`,
