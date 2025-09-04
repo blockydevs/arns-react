@@ -261,9 +261,9 @@ export const LINK_HOW_ARE_CONVERSIONS_DETERMINED =
   'https://help.ardrive.io/hc/en-us/articles/17043397992731';
 
 export const BLOCKYDEVS_ACTIVITY_PROCESS_ID =
-  'bNJGV0mNsZ0iMMiEZPbMtOQOfB0a6RJuPs3whiFLHyo';
+  'Jj8LhgFLmCE_BAMys_zoTDRx8eYXsSl3-BMBIov8n9E';
 export const BLOCKYDEVS_MARKETPLACE_PROCESS_ID =
-  'H8UI-IFfoFrnpIsl-MYE4brqRDR2FodL4ICzPklfxw8';
+  'a3jqBgXGAqefY4EHqkMwXhkBSFxZfzVdLU1oMUTQ-1M';
 export const BLOCKYDEVS_SWAP_TOKEN_ID =
   'agYcCFJtrMG6cqMuZfskIkFTGvUPddICmtQSBIoPdiA';
 export const AO_LINK_EXPLORER_URL = 'https://ao.link/#/entity';

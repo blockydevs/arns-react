@@ -1506,10 +1506,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blockydevs/arns-marketplace-data@^0.1.50":
-  version "0.1.50"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.50.tgz#b739237ea232f9e190bc3e8ab69735e00f936736"
-  integrity sha512-Kx9VzhFSJo9Dw9brvjfCJfuDpTFPZsTNt+BcyUxDD/c23UWbIFXUX+2+EPmLyt5HhgBvS6TeYacyIjh3vsodnA==
+"@blockydevs/arns-marketplace-data@^0.1.58":
+  version "0.1.58"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.58.tgz#1539b7284552da70979c89ed32de70c81d04d737"
+  integrity sha512-S46HPfbmdTxWw95fzRCDg/n1SnC7SeT2kzJMalqvreZBlj1ij6xg1PDqbgqhFuYgffYwew/sU2I4acA2davcuA==
 
 "@blockydevs/arns-marketplace-ui@^0.1.88":
   version "0.1.88"
