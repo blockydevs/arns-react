@@ -1,3 +1,4 @@
+import { createAoSigner } from '@ar.io/sdk';
 import { bidListing, buyListing } from '@blockydevs/arns-marketplace-data';
 import {
   Button,
@@ -63,7 +64,7 @@ const Confirm = () => {
         antTokenId: antProcessId,
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
         walletAddress: walletAddress.toString(),
-        signer: wallet.contractSigner,
+        signer: createAoSigner(wallet.contractSigner),
         orderType: type as 'fixed' | 'dutch', // FIXME:
       });
     },
@@ -95,7 +96,7 @@ const Confirm = () => {
         antTokenId: antProcessId,
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
         walletAddress: walletAddress.toString(),
-        signer: wallet.contractSigner,
+        signer: createAoSigner(wallet.contractSigner),
       });
     },
   });
@@ -217,10 +218,10 @@ const Confirm = () => {
                     onSuccess: async (data) => {
                       console.log(`${operation} success`, { data });
                       await Promise.all([
-                        queryClient.invalidateQueries({
+                        queryClient.refetchQueries({
                           queryKey: [marketplaceQueryKeys.listings.all],
                         }),
-                        queryClient.invalidateQueries({
+                        queryClient.refetchQueries({
                           queryKey: [marketplaceQueryKeys.myANTs.all],
                         }),
                       ]);

@@ -1,6 +1,9 @@
+import { createAoSigner } from '@ar.io/sdk';
 import {
+  calculateCurrentPriceOfDutchListing,
   fetchListingDetails,
   marioToArio,
+  settleListing,
 } from '@blockydevs/arns-marketplace-data';
 import {
   BidsTable,
@@ -20,13 +23,15 @@ import {
   getIntervalFromMs,
   shortenAddress,
 } from '@blockydevs/arns-marketplace-ui';
-import { useWalletState } from '@src/state';
+import { useGlobalState, useWalletState } from '@src/state';
 import {
   AO_LINK_EXPLORER_URL,
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+  BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   marketplaceQueryKeys,
 } from '@src/utils/constants';
-import { useQuery } from '@tanstack/react-query';
+import eventEmitter from '@src/utils/events';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -37,8 +42,10 @@ const Details = () => {
   const [bidPrice, setBidPrice] = useState<string | undefined>(undefined);
   const [bidPage, setBidPage] = useState(1);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { id } = useParams();
-  const [{ walletAddress }] = useWalletState();
+  const [{ aoClient }] = useGlobalState();
+  const [{ wallet, walletAddress }] = useWalletState();
   const queryDetails = useQuery({
     enabled: !!id,
     queryKey: marketplaceQueryKeys.listings.item(id),
@@ -46,8 +53,28 @@ const Details = () => {
       if (!id) throw new Error('No id provided');
 
       return fetchListingDetails({
-        orderId: id,
+        ao: aoClient,
         activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        orderId: id,
+      });
+    },
+  });
+
+  const mutationSettleListing = useMutation({
+    mutationFn: async ({ listingId }: { listingId: string }) => {
+      if (!wallet || !walletAddress) {
+        throw new Error('No wallet connected');
+      }
+
+      if (!wallet.contractSigner) {
+        throw new Error('No wallet signer available');
+      }
+
+      return await settleListing({
+        ao: aoClient,
+        orderId: listingId,
+        marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
+        signer: createAoSigner(wallet.contractSigner),
       });
     },
   });
@@ -70,6 +97,14 @@ const Details = () => {
   const marioPrice =
     listing.type === 'english'
       ? listing.highestBid ?? listing.startingPrice
+      : listing.type === 'dutch'
+      ? calculateCurrentPriceOfDutchListing({
+          startingPrice: listing.price,
+          minimumPrice: listing.minimumPrice,
+          decreaseInterval: listing.decreaseInterval,
+          decreaseStep: listing.decreaseStep,
+          createdAt: new Date(listing.createdAt).getTime(),
+        })
       : listing.price;
   const currentPrice = marioToArio(marioPrice);
 
@@ -90,13 +125,18 @@ const Details = () => {
   const endIndex = Math.min(startIndex + BIDS_PER_PAGE, allBids.length);
   // Create paginated slice of bids
   const paginatedBids = allBids.slice(startIndex, endIndex);
+  const minBid =
+    listing.type === 'english' && listing.highestBid
+      ? Number(currentPrice) + 1
+      : Number(currentPrice);
+  const isBidPriceValid = Number(bidPrice) >= minBid;
 
   const navigateToConfirmPurchase = (type: 'fixed' | 'english' | 'dutch') => {
     const orderId = listing.orderId;
     const name = listing.name;
     const antProcessId = listing.antProcessId;
 
-    const price = type === 'english' ? bidPrice : marioToArio(listing.price);
+    const price = type === 'english' ? bidPrice : currentPrice;
 
     if (!price) {
       throw new Error('Price is not set');
@@ -108,7 +148,6 @@ const Details = () => {
   };
 
   const openExplorer = (address: string) => {
-    // FIXME: should come from consts
     window.open(`${AO_LINK_EXPLORER_URL}/${address}`, '_blank');
   };
 
@@ -177,7 +216,9 @@ const Details = () => {
         <DetailsCard
           price={`${currentPrice} ARIO`}
           status={
-            listing.status === 'settled'
+            listing.status === 'ready-for-settlement'
+              ? 'sold' // FIXME: should be a separate status
+              : listing.status === 'settled'
               ? 'sold'
               : listing.status === 'expired'
               ? 'expired'
@@ -203,24 +244,56 @@ const Details = () => {
                 <Button
                   variant="primary"
                   className="w-full"
+                  disabled={!walletAddress}
                   onClick={() => {
                     navigateToConfirmPurchase('dutch');
                   }}
                 >
-                  Buy now
+                  {!walletAddress ? 'No wallet' : 'Buy now'}
                 </Button>
               )}
             </>
           ) : listing.type === 'english' ? (
             <>
-              {listing.status === 'settled' ? (
+              {listing.status === 'ready-for-settlement' ? (
                 <>
                   <Paragraph>
                     Starting price: {marioToArio(listing.startingPrice)} ARIO
                   </Paragraph>
-                  {listing.receiver === walletAddress && (
-                    <Button variant="primary" className="w-full">
-                      Settle now (You won)
+                  {listing.highestBidder === walletAddress?.toString() && (
+                    <Button
+                      variant="primary"
+                      className="w-full"
+                      disabled={mutationSettleListing.isPending}
+                      onClick={() => {
+                        mutationSettleListing.mutate(
+                          {
+                            listingId: listing.orderId,
+                          },
+                          {
+                            onError: (error) => {
+                              eventEmitter.emit('error', {
+                                message: error.message,
+                              });
+                            },
+                            onSuccess: async (data) => {
+                              console.log(`settlement success`, { data });
+                              await Promise.all([
+                                queryClient.refetchQueries({
+                                  queryKey: [marketplaceQueryKeys.listings.all],
+                                }),
+                                queryClient.refetchQueries({
+                                  queryKey: [marketplaceQueryKeys.myANTs.all],
+                                }),
+                              ]);
+                            },
+                          },
+                        );
+                      }}
+                    >
+                      {mutationSettleListing.isPending
+                        ? 'Settling...'
+                        : 'Settle now (You won)'}
                     </Button>
                   )}
                 </>
@@ -235,7 +308,7 @@ const Details = () => {
                     onChange={(e) => {
                       setBidPrice(e.target.value);
                     }}
-                    placeholder={`${currentPrice} and up`}
+                    placeholder={`${minBid} and up`}
                     label="Name your price"
                     suffix="ARIO"
                   />
@@ -243,14 +316,19 @@ const Details = () => {
                     variant="primary"
                     className="w-full"
                     disabled={
+                      !walletAddress ||
                       bidPrice === undefined ||
-                      Number(bidPrice) < Number(currentPrice)
+                      // if highest bid exists, bid must be strictly greater than it
+                      // if no bids yet, bid must be at least equal to starting price
+                      !isBidPriceValid
                     }
                     onClick={() => {
                       navigateToConfirmPurchase('english');
                     }}
                   >
-                    {Number(bidPrice) > Number(currentPrice)
+                    {!walletAddress
+                      ? 'No wallet'
+                      : isBidPriceValid
                       ? 'Place bid'
                       : 'Too small bid'}
                   </Button>
@@ -263,11 +341,12 @@ const Details = () => {
                 <Button
                   variant="primary"
                   className="w-full"
+                  disabled={!walletAddress}
                   onClick={() => {
                     navigateToConfirmPurchase('fixed');
                   }}
                 >
-                  Buy now
+                  {!walletAddress ? 'No wallet' : 'Buy now'}
                 </Button>
               )}
             </>
@@ -278,10 +357,17 @@ const Details = () => {
             <Paragraph className="text-xl text-[var(--ar-color-neutral-400)] mb-2">
               Buyer
             </Paragraph>
-            <Button variant="link" className="px-0">
+            <Button
+              variant="link"
+              className="px-0"
+              onClick={() => {
+                openExplorer(listing.receiver);
+              }}
+            >
               {shortenAddress(listing.receiver)}
               <span className="text-white font-normal text-[var(--ar-color-neutral-400)]">
-                {listing.receiver === walletAddress && '(Your wallet)'}
+                {listing.receiver === walletAddress?.toString() &&
+                  '(Your wallet)'}
               </span>
             </Button>
           </Card>

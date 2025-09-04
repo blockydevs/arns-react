@@ -446,6 +446,7 @@ function MyANTsNewListing() {
                 <Button
                   variant="primary"
                   size="small"
+                  disabled={mutation.isPending}
                   onClick={() => {
                     if (step === 1) setStep(2);
                     else {
@@ -458,10 +459,10 @@ function MyANTsNewListing() {
                         onSuccess: async (data) => {
                           console.log('listing created', { data });
                           await Promise.all([
-                            queryClient.invalidateQueries({
+                            queryClient.refetchQueries({
                               queryKey: [marketplaceQueryKeys.listings.all],
                             }),
-                            queryClient.invalidateQueries({
+                            queryClient.refetchQueries({
                               queryKey: [marketplaceQueryKeys.myANTs.all],
                             }),
                           ]);
@@ -471,11 +472,22 @@ function MyANTsNewListing() {
                     }
                   }}
                 >
-                  {step === 1 ? 'Next' : 'Confirm listing'}
+                  {step === 1
+                    ? 'Next'
+                    : mutation.isPending
+                    ? 'Confirming listing...'
+                    : 'Confirm listing'}
                 </Button>
               </>
             ) : (
-              <Button variant="primary" className="w-full">
+              <Button
+                variant="primary"
+                className="w-full"
+                onClick={() => {
+                  const listingId = mutation.data?.listing?.orderId;
+                  navigate(listingId ? `/listings/${listingId}` : '/listings');
+                }}
+              >
                 View listing
               </Button>
             )}
@@ -483,10 +495,22 @@ function MyANTsNewListing() {
         </Card>
         {step === 3 && (
           <div className="flex gap-6 mt-6">
-            <Button variant="secondary" className="w-full">
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => {
+                navigate('/my-ants');
+              }}
+            >
               List another ANT
             </Button>
-            <Button variant="secondary" className="w-full">
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => {
+                navigate('/listings');
+              }}
+            >
               Go to marketplace
             </Button>
           </div>
