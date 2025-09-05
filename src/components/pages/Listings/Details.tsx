@@ -1,6 +1,5 @@
 import { createAoSigner } from '@ar.io/sdk';
 import {
-  calculateCurrentPriceOfDutchListing,
   fetchListingDetails,
   marioToArio,
   settleListing,
@@ -16,11 +15,12 @@ import {
   Pagination,
   Paragraph,
   Row,
+  Schedule,
   Spinner,
-  calculateDecreaseSchedule,
+  calculateCurrentDutchListingPrice,
   formatDate,
   formatMillisecondsToDate,
-  getIntervalFromMs,
+  getDutchListingSchedule,
   shortenAddress,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
@@ -89,7 +89,9 @@ const Details = () => {
 
   if (queryDetails.error) {
     return (
-      <p className="text-error text-center">{queryDetails.error.message}</p>
+      <p className="text-error text-center">
+        Failed to load listing details: {queryDetails.error.message}
+      </p>
     );
   }
 
@@ -98,7 +100,7 @@ const Details = () => {
     listing.type === 'english'
       ? listing.highestBid ?? listing.startingPrice
       : listing.type === 'dutch'
-      ? calculateCurrentPriceOfDutchListing({
+      ? calculateCurrentDutchListingPrice({
           startingPrice: listing.startingPrice,
           minimumPrice: listing.minimumPrice,
           decreaseInterval: listing.decreaseInterval,
@@ -150,6 +152,25 @@ const Details = () => {
   const openExplorer = (address: string) => {
     window.open(`${AO_LINK_EXPLORER_URL}/${address}`, '_blank');
   };
+
+  const dutchPriceSchedule: Schedule[] =
+    listing.type === 'dutch'
+      ? getDutchListingSchedule({
+          startingPrice: listing.startingPrice,
+          minimumPrice: listing.minimumPrice,
+          decreaseInterval: listing.decreaseInterval,
+          decreaseStep: listing.decreaseStep,
+          createdAt: new Date(listing.createdAt).getTime(),
+          endedAt: new Date(
+            listing.status !== 'active' && listing.endedAt
+              ? listing.endedAt
+              : listing.expiresAt,
+          ).getTime(),
+        }).map((item) => ({
+          date: formatDate(item.date),
+          price: Number(marioToArio(item.price)),
+        }))
+      : [];
 
   return (
     <div className="max-w-6xl w-full px-6 mx-auto grid lg:grid-cols-5 gap-6 py-12">
@@ -203,18 +224,7 @@ const Details = () => {
               Price decrease schedule
             </Paragraph>
             <div className="max-h-80 overflow-y-auto">
-              <DecreaseScheduleTable
-                data={calculateDecreaseSchedule(
-                  listing.createdAt,
-                  // FIXME: it should be required for dutch
-                  listing.expiresAt ??
-                    new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                  Number(marioToArio(listing.minimumPrice)),
-                  getIntervalFromMs(Number(listing.decreaseInterval)) ??
-                    '1hour',
-                  Number(marioToArio(listing.startingPrice)),
-                )}
-              />
+              <DecreaseScheduleTable data={dutchPriceSchedule} />
             </div>
           </Card>
         )}
