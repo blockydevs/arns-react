@@ -1,4 +1,5 @@
 // FIXME: refactor with proper form
+import { createAoSigner } from '@ar.io/sdk';
 import { createListing } from '@blockydevs/arns-marketplace-data';
 import {
   Button,
@@ -31,6 +32,17 @@ import { PriceScheduleModal } from './PriceScheduleModal';
 
 type Step = 1 | 2 | 3;
 
+interface FormState {
+  type: string;
+  price: string;
+  minimumPrice: string;
+  duration: string;
+  decrease: string;
+  hasExpirationTime: boolean;
+  date: Date | undefined;
+  time: string;
+}
+
 function mergeDateAndTime(
   date: Date | undefined,
   time: string,
@@ -47,27 +59,59 @@ function mergeDateAndTime(
   return merged;
 }
 
+// FIXME: replace with util
+function pickMilisekundsBasedOnDuration(value: string) {
+  switch (value) {
+    case 'test':
+      return 5 * 60 * 1000;
+    case 'week':
+      return 7 * 24 * 60 * 60 * 1000;
+    case 'month':
+      return 30 * 24 * 60 * 60 * 1000;
+    default:
+      return 0;
+  }
+}
+
+const typeOptions: SelectOption[] = [
+  { label: 'Fixed price', value: 'fixed' },
+  { label: 'English auction', value: 'english' },
+  { label: 'Dutch auction', value: 'dutch' },
+];
+
+const durationOptions: SelectOption[] = [
+  { label: '5 minutes', value: 'test' }, // FIXME: remove
+  { label: '1 week', value: 'week' },
+  { label: '1 month', value: 'month' },
+  { label: 'Custom date', value: 'custom' },
+];
+
+const decreaseOptions: SelectOption[] = [
+  { label: '1 hour', value: '1hour' },
+  { label: '12 hours', value: '12hours' },
+  { label: '1 day', value: 'day' },
+  { label: 'week', value: 'week' },
+];
+
 function MyANTsNewListing() {
-  // MOCKED STATE BEFORE FORM INTEGRATION
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const { antProcessId } = useParams();
   const [searchParams] = useSearchParams();
-  const [type, setType] = useState<string>();
-  const [price, setPrice] = useState<string>();
-  const [minimumPrice, setMinimumPrice] = useState<string>();
-  const [duration, setDuration] = useState<string>();
-  const [decrease, setDecrease] = useState<string>();
-  const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [time, setTime] = useState<string>('12:00:00');
-  const [hasExpirationTime, setHasExpirationTime] = useState(false);
-
   const [{ antAoClient }] = useGlobalState();
   const [{ wallet, walletAddress }] = useWalletState();
-
-  const name = searchParams.get('name') ?? '-';
+  const [form, setForm] = useState<FormState>({
+    type: '',
+    price: '',
+    minimumPrice: '',
+    duration: '',
+    decrease: '',
+    hasExpirationTime: false,
+    date: new Date(),
+    time: '12:00:00',
+  });
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -83,11 +127,11 @@ function MyANTsNewListing() {
         throw new Error('antProcessId is missing');
       }
 
-      if (!price) {
+      if (!form.price) {
         throw new Error('No price specified');
       }
 
-      if (!type) {
+      if (!form.type) {
         throw new Error('No type specified');
       }
 
@@ -101,77 +145,90 @@ function MyANTsNewListing() {
         marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
         config: (() => {
-          switch (type) {
+          switch (form.type) {
             case 'fixed': {
-              const expiresAt = hasExpirationTime
-                ? mergeDateAndTime(date, time)?.getTime()
+              const expiresAt = form.hasExpirationTime
+                ? mergeDateAndTime(form.date, form.time)?.getTime()
                 : undefined;
 
               return {
-                type,
-                price: price.toString(),
+                type: form.type,
+                price: form.price.toString(),
                 expiresAt,
               };
             }
             case 'dutch': {
-              if (!minimumPrice) {
+              if (!form.minimumPrice) {
                 throw new Error('minimum price is missing');
               }
 
-              if (!decrease) {
+              if (!form.decrease) {
                 throw new Error('decrease interval is missing');
               }
 
               const decreaseIntervalMs = (() => {
-                if (decrease === '1hour') return oneHourMs;
-                if (decrease === '12hours') return 12 * oneHourMs;
-                if (decrease === 'day') return 24 * oneHourMs;
-                if (decrease === 'week') return 7 * 24 * oneHourMs;
-                throw new Error(`Unsupported decrease value ${decrease}`);
+                if (form.decrease === '1hour') return oneHourMs;
+                if (form.decrease === '12hours') return 12 * oneHourMs;
+                if (form.decrease === 'day') return 24 * oneHourMs;
+                if (form.decrease === 'week') return 7 * 24 * oneHourMs;
+                throw new Error(`Unsupported decrease value ${form.decrease}`);
               })();
 
               const durationMs = (() => {
-                if (duration === 'test') return 5 * 60 * 1000;
-                if (duration === 'week') return 7 * oneDayMs;
-                if (duration === 'month') return 30 * oneDayMs;
+                if (form.duration === 'test') return 5 * 60 * 1000;
+                if (form.duration === 'week') return 7 * oneDayMs;
+                if (form.duration === 'month') return 30 * oneDayMs;
                 return undefined;
               })();
 
               return {
-                type,
-                price: price.toString(),
-                minimumPrice,
+                type: form.type,
+                price: form.price.toString(),
+                minimumPrice: form.minimumPrice.toString(),
                 decreaseInterval: decreaseIntervalMs.toString(),
                 ...(durationMs && { expiresAt: Date.now() + durationMs }),
               };
             }
             case 'english': {
               const expiresAt = (() => {
-                if (duration === 'test') return Date.now() + 5 * 60 * 1000;
-                if (duration === 'week') return Date.now() + 7 * oneDayMs;
-                if (duration === 'month') return Date.now() + 30 * oneDayMs;
-                if (duration === 'custom')
-                  return mergeDateAndTime(date, time)?.getTime();
+                if (form.duration === 'test') return Date.now() + 5 * 60 * 1000;
+                if (form.duration === 'week') return Date.now() + 7 * oneDayMs;
+                if (form.duration === 'month')
+                  return Date.now() + 30 * oneDayMs;
+                if (form.duration === 'custom')
+                  return mergeDateAndTime(form.date, form.time)?.getTime();
 
                 return undefined;
               })();
 
               return {
-                type,
-                price: price.toString(),
+                type: form.type,
+                price: form.price.toString(),
                 expiresAt,
               };
             }
             default: {
-              throw new Error(`Unsupported listing type ${type}`);
+              throw new Error(`Unsupported listing type ${form.type}`);
             }
           }
         })(),
         walletAddress: walletAddress.toString(),
-        signer: wallet.contractSigner,
+        signer: createAoSigner(wallet.contractSigner),
       });
     },
   });
+
+  const name = searchParams.get('name') ?? '-';
+
+  const endDate =
+    form.duration === 'custom'
+      ? form.date
+        ? `${formatDate(form.date.toString(), 'yyyy-MM-dd')}T${form.time}`
+        : new Date().toString()
+      : addMilliseconds(
+          new Date(),
+          pickMilisekundsBasedOnDuration(form.duration ?? '0'),
+        ).toString();
 
   const renderProperGoBackHeader = (step: Step) => {
     switch (step) {
@@ -209,49 +266,15 @@ function MyANTsNewListing() {
     }
   };
 
-  const options: SelectOption[] = [
-    { label: 'Dutch auction', value: 'dutch' },
-    { label: 'English auction', value: 'english' },
-    { label: 'Fix price', value: 'fixed' },
-  ];
-
-  const durationOptions: SelectOption[] = [
-    { label: '5 minutes', value: 'test' },
-    { label: '1 week', value: 'week' },
-    { label: '1 month', value: 'month' },
-    { label: 'Custom date', value: 'custom' },
-  ];
-
-  const decreaseOptions: SelectOption[] = [
-    { label: '1 hour', value: '1hour' },
-    { label: '12 hours', value: '12hours' },
-    { label: '1 day', value: 'day' },
-    { label: 'week', value: 'week' },
-  ];
-
-  // FIXME: replace with util
-  const pickMilisekundsBasedOnDuration = (value: string) => {
-    switch (value) {
-      case 'test':
-        return 5 * 60 * 1000;
-      case 'week':
-        return 7 * 24 * 60 * 60 * 1000;
-      case 'month':
-        return 30 * 24 * 60 * 60 * 1000;
-      default:
-        return 0;
-    }
+  const updateForm = <T extends keyof FormState>(
+    field: T,
+    value: FormState[T],
+  ) => {
+    setForm((state) => ({
+      ...state,
+      [field]: value,
+    }));
   };
-
-  const endDate =
-    duration === 'custom'
-      ? date
-        ? `${formatDate(date.toString(), 'yyyy-MM-dd')}T${time}`
-        : new Date().toString()
-      : addMilliseconds(
-          new Date(),
-          pickMilisekundsBasedOnDuration(duration ?? '0'),
-        ).toString();
 
   return (
     <>
@@ -266,23 +289,24 @@ function MyANTsNewListing() {
                 <Select
                   placeholder="Type of listing"
                   className="w-full"
-                  defaultValue={type}
-                  onValueChange={(value) => setType(value)}
-                  options={options}
+                  defaultValue={form.type}
+                  onValueChange={(value) => updateForm('type', value)}
+                  options={typeOptions}
                 />
               </div>
               <Input
-                onChange={(e) => setPrice(e.target.value)}
-                value={price}
+                onChange={(e) => updateForm('price', e.target.value)}
+                value={form.price}
+                min={0}
                 label="Price"
                 suffix="ARIO"
                 type="number"
               />
-              {type === 'dutch' ? (
+              {form.type === 'dutch' ? (
                 <>
                   <Input
-                    onChange={(e) => setMinimumPrice(e.target.value)}
-                    value={minimumPrice}
+                    onChange={(e) => updateForm('minimumPrice', e.target.value)}
+                    value={form.minimumPrice}
                     label="Minimum price (floor)"
                     suffix="ARIO"
                     type="number"
@@ -292,18 +316,18 @@ function MyANTsNewListing() {
                     <Select
                       placeholder="Choose duration"
                       className="w-full"
-                      onValueChange={(value) => setDuration(value)}
+                      onValueChange={(value) => updateForm('duration', value)}
                       options={durationOptions}
                     />
                   </div>
-                  {duration === 'custom' && (
+                  {form.duration === 'custom' && (
                     <DatePicker
-                      date={date}
+                      date={form.date}
                       open={open}
-                      setDate={setDate}
+                      setDate={(date) => updateForm('date', date)}
                       setOpen={setOpen}
-                      time={time}
-                      setTime={setTime}
+                      time={form.time}
+                      setTime={(time) => updateForm('time', time)}
                     />
                   )}
                   <div className="flex flex-col gap-2">
@@ -311,36 +335,36 @@ function MyANTsNewListing() {
                     <Select
                       placeholder="Choose decrease interval"
                       className="w-full"
-                      onValueChange={(value) => setDecrease(value)}
+                      onValueChange={(value) => updateForm('decrease', value)}
                       options={decreaseOptions}
                     />
                     <PriceScheduleModal
-                      basePrice={Number(price)}
-                      floorPrice={Number(minimumPrice)}
+                      basePrice={Number(form.price)}
+                      floorPrice={Number(form.minimumPrice)}
                       date={endDate}
-                      interval={decrease as Interval}
+                      interval={form.decrease as Interval}
                     />
                   </div>
                 </>
-              ) : type === 'english' ? (
+              ) : form.type === 'english' ? (
                 <>
                   <div className="flex flex-col gap-2">
                     <Label>Duration</Label>
                     <Select
                       placeholder="Choose duration"
                       className="w-full"
-                      onValueChange={(value) => setDuration(value)}
+                      onValueChange={(value) => updateForm('duration', value)}
                       options={durationOptions}
                     />
                   </div>
-                  {duration === 'custom' && (
+                  {form.duration === 'custom' && (
                     <DatePicker
-                      date={date}
                       open={open}
-                      setDate={setDate}
                       setOpen={setOpen}
-                      time={time}
-                      setTime={setTime}
+                      date={form.date}
+                      time={form.time}
+                      setDate={(date) => updateForm('date', date)}
+                      setTime={(time) => updateForm('time', time)}
                     />
                   )}
                 </>
@@ -353,22 +377,22 @@ function MyANTsNewListing() {
                   </p>
                   <CheckboxWithLabel
                     label="Set expiration date"
-                    checked={hasExpirationTime}
+                    checked={form.hasExpirationTime}
                     onCheckedChange={() => {
-                      setHasExpirationTime((state) => !state);
-                      setTime('12:00:00');
-                      setDate(undefined);
+                      updateForm('hasExpirationTime', !form.hasExpirationTime);
+                      updateForm('time', '12:00:00');
+                      updateForm('date', undefined);
                     }}
                   />
-                  {hasExpirationTime && (
+                  {form.hasExpirationTime && (
                     <div className="mt-6">
                       <DatePicker
-                        date={date}
                         open={open}
-                        setDate={setDate}
                         setOpen={setOpen}
-                        time={time}
-                        setTime={setTime}
+                        date={form.date}
+                        time={form.time}
+                        setDate={(date) => updateForm('date', date)}
+                        setTime={(time) => updateForm('time', time)}
                       />
                     </div>
                   )}
@@ -377,44 +401,44 @@ function MyANTsNewListing() {
             </>
           ) : (
             <>
-              <Row label="Type of listing" value={type} />
+              <Row label="Type of listing" value={form.type} />
               <Row
-                label={type === 'english' ? 'Starting price' : 'Price'}
-                value={`${price} ARIO`}
+                label={form.type === 'english' ? 'Starting price' : 'Price'}
+                value={`${form.price} ARIO`}
               />
-              {type === 'dutch' ? (
+              {form.type === 'dutch' ? (
                 <>
                   <Row
                     label="Minimum price (Floor price)"
-                    value={`${minimumPrice} ARIO`}
+                    value={`${form.minimumPrice} ARIO`}
                   />
-                  <Row label="Duration" value={duration} />
+                  <Row label="Duration" value={form.duration} />
                   <Row
                     label="Price decrease interval"
-                    value={`Every ${decrease}`}
+                    value={`Every ${form.decrease}`}
                   />
                   <PriceScheduleModal
-                    basePrice={Number(price)}
-                    floorPrice={Number(minimumPrice)}
+                    basePrice={Number(form.price)}
+                    floorPrice={Number(form.minimumPrice)}
                     date={endDate}
-                    interval={decrease as Interval}
+                    interval={form.decrease as Interval}
                   />
                 </>
-              ) : type === 'english' ? (
+              ) : form.type === 'english' ? (
                 <>
-                  <Row label="Duration" value={duration} />
+                  <Row label="Duration" value={form.duration} />
                 </>
               ) : (
                 <>
-                  {hasExpirationTime ? (
+                  {form.hasExpirationTime ? (
                     <Row
                       label="Expiration time"
                       value={
-                        date
+                        form.date
                           ? `${formatDate(
-                              date.toString(),
+                              form.date.toString(),
                               'yyyy-MM-dd',
-                            )}T${time}`
+                            )}T${form.time}`
                           : '-'
                       }
                     />
@@ -452,7 +476,9 @@ function MyANTsNewListing() {
                     else {
                       mutation.mutate(undefined, {
                         onError: (error) => {
+                          console.error(error);
                           eventEmitter.emit('error', {
+                            name: 'Failed to create listing',
                             message: error.message,
                           });
                         },

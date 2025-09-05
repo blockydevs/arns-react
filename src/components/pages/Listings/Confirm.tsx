@@ -212,6 +212,7 @@ const Confirm = () => {
                   {
                     onError: (error) => {
                       eventEmitter.emit('error', {
+                        name: `Failed to ${operation} listing`,
                         message: error.message,
                       });
                     },

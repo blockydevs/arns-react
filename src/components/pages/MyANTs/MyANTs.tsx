@@ -5,6 +5,7 @@ import {
   Header,
   MyANTsTable,
   OwnedDomain,
+  Spinner,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
 import {
@@ -17,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 const MyANTs = () => {
   const navigate = useNavigate();
 
-  const [{ aoClient }] = useGlobalState();
+  const [{ aoClient, aoNetwork }] = useGlobalState();
   const [{ walletAddress }] = useWalletState();
 
   const queryMyANTs = useQuery({
@@ -31,6 +32,7 @@ const MyANTs = () => {
         ao: aoClient,
         networkProcessId: ARIO_TESTNET_PROCESS_ID,
         activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        graphqlUrl: aoNetwork.ANT.GRAPHQL_URL,
       });
     },
     select: (data) => {
@@ -69,9 +71,12 @@ const MyANTs = () => {
 
   return (
     <div className="w-full px-8">
-      <Header size="h1" className="my-12">
-        My ANTs
-      </Header>
+      <div className="flex gap-4 items-center">
+        <Header size="h1" className="my-12">
+          My ANTs
+        </Header>
+        {queryMyANTs.isRefetching && <Spinner className="size-8 text-white" />}
+      </div>
       <Card>
         <MyANTsTable
           data={queryMyANTs.data ?? []}
