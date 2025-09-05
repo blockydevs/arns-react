@@ -99,7 +99,7 @@ const Details = () => {
       ? listing.highestBid ?? listing.startingPrice
       : listing.type === 'dutch'
       ? calculateCurrentPriceOfDutchListing({
-          startingPrice: listing.price,
+          startingPrice: listing.startingPrice,
           minimumPrice: listing.minimumPrice,
           decreaseInterval: listing.decreaseInterval,
           decreaseStep: listing.decreaseStep,
@@ -159,6 +159,13 @@ const Details = () => {
             {listing.name}
           </Header>
         </Card>
+        {listing.ownershipType === 'lease' && !!listing.leaseEndsAt && (
+          <Card>
+            <Row label="Lease expiration">
+              <Paragraph>{formatDate(listing.leaseEndsAt)}</Paragraph>
+            </Row>
+          </Card>
+        )}
         <Card>
           <Paragraph className="mb-5">Metadata</Paragraph>
           <div className="grid grid-cols-2 gap-4">
@@ -273,6 +280,7 @@ const Details = () => {
                           {
                             onError: (error) => {
                               eventEmitter.emit('error', {
+                                name: 'Failed to settle listing',
                                 message: error.message,
                               });
                             },

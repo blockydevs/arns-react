@@ -1,4 +1,5 @@
 import {
+  calculateCurrentPriceOfDutchListing,
   fetchCompletedListings,
   marioToArio,
 } from '@blockydevs/arns-marketplace-data';
@@ -42,15 +43,30 @@ const CompletedListingsTab = () => {
 
       return {
         ...data,
-        items: data.items.map(
-          (item): Domain => ({
+        items: data.items.map((item): Domain => {
+          const marioPrice =
+            item.type === 'english'
+              ? item.highestBid ?? item.startingPrice
+              : item.type === 'dutch'
+              ? calculateCurrentPriceOfDutchListing({
+                  startingPrice: item.startingPrice,
+                  minimumPrice: item.minimumPrice,
+                  decreaseInterval: item.decreaseInterval,
+                  decreaseStep: item.decreaseStep,
+                  createdAt: new Date(item.createdAt).getTime(),
+                  endedAt: new Date(item.endedAt).getTime(),
+                })
+              : item.price;
+          const currentPrice = marioToArio(marioPrice);
+
+          return {
             name: item.name,
             createdAt: item.createdAt,
             endDate: item.endedAt,
             price: {
               type: item.type === 'english' ? 'bid' : 'buyout',
               symbol: 'ARIO',
-              value: Number(marioToArio(item.price)),
+              value: Number(currentPrice),
             },
             type: {
               value: item.type,
@@ -58,8 +74,8 @@ const CompletedListingsTab = () => {
             action: () => {
               navigate(`/listings/${item.orderId}`);
             },
-          }),
-        ),
+          };
+        }),
       };
     },
   });
