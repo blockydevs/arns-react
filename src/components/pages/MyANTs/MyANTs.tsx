@@ -6,6 +6,7 @@ import {
   MyANTsTable,
   OwnedDomain,
   Spinner,
+  calculateCurrentDutchListingPrice,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
 import {
@@ -36,8 +37,8 @@ const MyANTs = () => {
       });
     },
     select: (data) => {
-      return Object.values(data).map(
-        (domain): OwnedDomain => ({
+      return Object.values(data).map((domain): OwnedDomain => {
+        return {
           name: domain.name,
           action: () => {
             if (domain.listing) {
@@ -55,7 +56,23 @@ const MyANTs = () => {
             ? {
                 type: domain.listing.type === 'english' ? 'bid' : 'buyout',
                 symbol: 'ARIO',
-                value: Number(marioToArio(domain.listing.price)),
+                value: (() => {
+                  const item = domain.listing;
+                  const marioPrice =
+                    item.type === 'english'
+                      ? item.highestBid ?? item.startingPrice
+                      : item.type === 'dutch'
+                      ? calculateCurrentDutchListingPrice({
+                          startingPrice: item.startingPrice,
+                          minimumPrice: item.minimumPrice,
+                          decreaseInterval: item.decreaseInterval,
+                          decreaseStep: item.decreaseStep,
+                          createdAt: new Date(item.createdAt).getTime(),
+                          endedAt: new Date(item.expiresAt).getTime(),
+                        })
+                      : item.price;
+                  return Number(marioToArio(marioPrice));
+                })(),
               }
             : undefined,
           type: domain.listing
@@ -64,8 +81,8 @@ const MyANTs = () => {
               }
             : undefined,
           status: domain.listing ? 'listed' : 'idle',
-        }),
-      );
+        };
+      });
     },
   });
 

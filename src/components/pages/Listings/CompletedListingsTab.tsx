@@ -1,5 +1,4 @@
 import {
-  calculateCurrentPriceOfDutchListing,
   fetchCompletedListings,
   marioToArio,
 } from '@blockydevs/arns-marketplace-data';
@@ -8,6 +7,7 @@ import {
   CompletedListingTable,
   type Domain,
   Pagination,
+  calculateCurrentDutchListingPrice,
   useCursorPagination,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState } from '@src/state';
@@ -48,7 +48,7 @@ const CompletedListingsTab = () => {
             item.type === 'english'
               ? item.highestBid ?? item.startingPrice
               : item.type === 'dutch'
-              ? calculateCurrentPriceOfDutchListing({
+              ? calculateCurrentDutchListingPrice({
                   startingPrice: item.startingPrice,
                   minimumPrice: item.minimumPrice,
                   decreaseInterval: item.decreaseInterval,

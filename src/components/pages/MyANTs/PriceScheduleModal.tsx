@@ -1,3 +1,4 @@
+import { arioToMario, marioToArio } from '@blockydevs/arns-marketplace-data';
 import {
   Button,
   DecreaseScheduleTable,
@@ -7,21 +8,44 @@ import {
   DialogTitle,
   DialogTrigger,
   Interval,
-  calculateDecreaseSchedule,
+  Schedule,
+  formatDate,
+  getDutchListingSchedule,
+  getIntervalInMs,
 } from '@blockydevs/arns-marketplace-ui';
 
 interface Props {
-  date: string;
-  interval: Interval;
-  floorPrice: number;
-  basePrice: number;
+  minimumPrice: number;
+  startingPrice: number;
+  decreaseInterval: Interval;
+  dateFrom: Date;
+  dateTo: Date;
 }
 export const PriceScheduleModal: React.FC<Props> = ({
-  date,
-  interval,
-  floorPrice,
-  basePrice,
+  startingPrice,
+  minimumPrice,
+  decreaseInterval,
+  dateFrom,
+  dateTo,
 }) => {
+  const dutchPriceSchedule: Schedule[] = (() => {
+    try {
+      return getDutchListingSchedule({
+        createdAt: dateFrom.getTime(),
+        endedAt: dateTo.getTime(),
+        startingPrice: arioToMario(startingPrice),
+        minimumPrice: arioToMario(minimumPrice),
+        decreaseInterval: getIntervalInMs(decreaseInterval).toString(),
+        decreaseStep: arioToMario(1),
+      }).map((item) => ({
+        date: formatDate(item.date),
+        price: Number(marioToArio(item.price)),
+      }));
+    } catch {
+      return [];
+    }
+  })();
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -36,15 +60,7 @@ export const PriceScheduleModal: React.FC<Props> = ({
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[480px] overflow-auto overflow-x-hidden">
-          <DecreaseScheduleTable
-            data={calculateDecreaseSchedule(
-              new Date().toString(),
-              date,
-              floorPrice,
-              interval,
-              basePrice,
-            )}
-          />
+          <DecreaseScheduleTable data={dutchPriceSchedule} />
         </div>
       </DialogContent>
     </Dialog>
