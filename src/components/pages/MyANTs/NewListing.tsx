@@ -339,10 +339,11 @@ function MyANTsNewListing() {
                       options={decreaseOptions}
                     />
                     <PriceScheduleModal
-                      basePrice={Number(form.price)}
-                      floorPrice={Number(form.minimumPrice)}
-                      date={endDate}
-                      interval={form.decrease as Interval}
+                      startingPrice={Number(form.price)}
+                      minimumPrice={Number(form.minimumPrice)}
+                      dateFrom={new Date()}
+                      dateTo={new Date(endDate)}
+                      decreaseInterval={form.decrease as Interval}
                     />
                   </div>
                 </>
@@ -418,10 +419,11 @@ function MyANTsNewListing() {
                     value={`Every ${form.decrease}`}
                   />
                   <PriceScheduleModal
-                    basePrice={Number(form.price)}
-                    floorPrice={Number(form.minimumPrice)}
-                    date={endDate}
-                    interval={form.decrease as Interval}
+                    startingPrice={Number(form.price)}
+                    minimumPrice={Number(form.minimumPrice)}
+                    dateFrom={new Date()}
+                    dateTo={new Date(endDate)}
+                    decreaseInterval={form.decrease as Interval}
                   />
                 </>
               ) : form.type === 'english' ? (
