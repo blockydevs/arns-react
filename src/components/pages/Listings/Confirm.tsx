@@ -52,8 +52,8 @@ const Confirm = () => {
         throw new Error('listingId is missing');
       }
 
-      if (!type) {
-        throw new Error(`type is missing or invalid (${type})`);
+      if (type !== 'fixed' && type !== 'dutch') {
+        throw new Error(`invalid listing type for buy: ${type}`);
       }
 
       return await buyListing({
@@ -65,7 +65,7 @@ const Confirm = () => {
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
         walletAddress: walletAddress.toString(),
         signer: createAoSigner(wallet.contractSigner),
-        orderType: type as 'fixed' | 'dutch', // FIXME:
+        orderType: type,
       });
     },
   });
@@ -196,7 +196,9 @@ const Confirm = () => {
               variant="primary"
               size="small"
               disabled={
-                mutationBidListing.isPending || mutationBuyListing.isPending
+                !walletAddress ||
+                mutationBidListing.isPending ||
+                mutationBuyListing.isPending
               }
               onClick={() => {
                 const operation = type === 'english' ? 'bid' : 'buy';
@@ -212,7 +214,7 @@ const Confirm = () => {
                   {
                     onError: (error) => {
                       eventEmitter.emit('error', {
-                        name: `Failed to ${operation} listing`,
+                        name: `Failed to ${operation}`,
                         message: error.message,
                       });
                     },
@@ -232,7 +234,11 @@ const Confirm = () => {
                 );
               }}
             >
-              {type === 'english' ? 'Confirm bid' : 'Confirm purchase'}
+              {!walletAddress
+                ? 'No wallet'
+                : type === 'english'
+                ? 'Confirm bid'
+                : 'Confirm purchase'}
             </Button>
           </div>
         </Card>
