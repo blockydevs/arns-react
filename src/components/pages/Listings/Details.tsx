@@ -39,7 +39,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const BIDS_PER_PAGE = 5;
 
 const Details = () => {
-  const [bidPrice, setBidPrice] = useState<string | undefined>(undefined);
+  const [bidPrice, setBidPrice] = useState<string>('');
   const [bidPage, setBidPage] = useState(1);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -96,18 +96,28 @@ const Details = () => {
   }
 
   const listing = queryDetails.data;
-  const marioPrice =
-    listing.type === 'english'
-      ? listing.highestBid ?? listing.startingPrice
-      : listing.type === 'dutch'
-      ? calculateCurrentDutchListingPrice({
-          startingPrice: listing.startingPrice,
-          minimumPrice: listing.minimumPrice,
-          decreaseInterval: listing.decreaseInterval,
-          decreaseStep: listing.decreaseStep,
-          createdAt: new Date(listing.createdAt).getTime(),
-        })
-      : listing.price;
+  const marioPrice = (() => {
+    if (listing.type === 'english') {
+      return listing.highestBid ?? listing.startingPrice;
+    }
+
+    if (listing.type === 'dutch' && listing.status !== 'settled') {
+      return calculateCurrentDutchListingPrice({
+        startingPrice: listing.startingPrice,
+        minimumPrice: listing.minimumPrice,
+        decreaseInterval: listing.decreaseInterval,
+        decreaseStep: listing.decreaseStep,
+        createdAt: new Date(listing.createdAt).getTime(),
+      });
+    }
+
+    if (listing.status === 'settled') {
+      return listing.finalPrice;
+    }
+
+    return listing.price;
+  })();
+
   const currentPrice = marioToArio(marioPrice);
 
   // english type only
@@ -233,16 +243,15 @@ const Details = () => {
         <DetailsCard
           price={`${currentPrice} ARIO`}
           status={
-            listing.status === 'ready-for-settlement'
-              ? 'sold' // FIXME: should be a separate status
-              : listing.status === 'settled'
+            listing.status === 'ready-for-settlement' ||
+            listing.status === 'settled'
               ? 'sold'
               : listing.status === 'expired'
               ? 'expired'
               : undefined
           }
           startDate={listing.createdAt}
-          endDate={listing.expiresAt}
+          endDate={'endedAt' in listing ? listing.endedAt : listing.expiresAt}
           variant={listing.type}
         >
           {listing.type === 'dutch' ? (
