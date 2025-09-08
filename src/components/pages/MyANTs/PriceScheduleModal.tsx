@@ -7,20 +7,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Interval,
   Schedule,
   formatDate,
   getDutchListingSchedule,
-  getIntervalInMs,
 } from '@blockydevs/arns-marketplace-ui';
+import { getMsFromInterval } from '@src/utils/marketplace';
 
 interface Props {
   minimumPrice: number;
   startingPrice: number;
-  decreaseInterval: Interval;
+  decreaseInterval: string | undefined;
   dateFrom: Date;
   dateTo: Date;
 }
+
 export const PriceScheduleModal: React.FC<Props> = ({
   startingPrice,
   minimumPrice,
@@ -30,16 +30,24 @@ export const PriceScheduleModal: React.FC<Props> = ({
 }) => {
   const dutchPriceSchedule: Schedule[] = (() => {
     try {
+      const decreaseIntervalMs = getMsFromInterval(decreaseInterval);
+      if (!decreaseIntervalMs || decreaseIntervalMs === 0) return [];
+
+      const totalIntervals = Math.floor(
+        (dateTo.getTime() - dateFrom.getTime()) / decreaseIntervalMs,
+      );
+      const step = (startingPrice - minimumPrice) / totalIntervals;
+
       return getDutchListingSchedule({
         createdAt: dateFrom.getTime(),
         endedAt: dateTo.getTime(),
         startingPrice: arioToMario(startingPrice),
         minimumPrice: arioToMario(minimumPrice),
-        decreaseInterval: getIntervalInMs(decreaseInterval).toString(),
-        decreaseStep: arioToMario(1),
+        decreaseInterval: decreaseIntervalMs.toString(),
+        decreaseStep: arioToMario(step),
       }).map((item) => ({
         date: formatDate(item.date),
-        price: Number(marioToArio(item.price)),
+        price: Number(Number(marioToArio(item.price)).toFixed(6)),
       }));
     } catch {
       return [];
@@ -48,7 +56,7 @@ export const PriceScheduleModal: React.FC<Props> = ({
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger disabled={!decreaseInterval} asChild>
         <Button variant="link" size="small" className="inline-flex w-fit px-0">
           View price schedule
         </Button>

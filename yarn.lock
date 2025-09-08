@@ -1506,15 +1506,15 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blockydevs/arns-marketplace-data@^0.1.74":
-  version "0.1.74"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.74.tgz#923c6e448d48ff4815d8b469187948d8b72293af"
-  integrity sha512-hl1HHghJqf5/jv3zZSHu/Nadz0DFv78sGYPjF9ceWN33wTsQXzhYE6lfvCGq89aAvhvVXL4fwarjuAXi1fk/wg==
+"@blockydevs/arns-marketplace-data@^0.1.76":
+  version "0.1.76"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.76.tgz#a05209c5b379e83b8939cf76e6e036a5d97668f6"
+  integrity sha512-wEEmOGJxsDY7TSM+keqnA8iuiKhq9hZTc24R65EPCIA1E6GrO0TFwkmPbdAImF2jGOSkgN7F19tilJnNW4ykZw==
 
-"@blockydevs/arns-marketplace-ui@^0.1.91":
-  version "0.1.91"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.91.tgz#ada0cd85d0304d1e6704e1cf36835776cfb6d16e"
-  integrity sha512-UiGpP+N4M3vz8SvEJxqEk0QtB/cy/yv0BlmvRHT1/cideJYMIskdu771g9WIgZRpJH0cw0oRPi3+3HyAbkeSnA==
+"@blockydevs/arns-marketplace-ui@^0.1.100":
+  version "0.1.100"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.100.tgz#a75b45e4f5b1da754641f7cbbd55e28db41c0e10"
+  integrity sha512-ELzLEdQj2rRV+42G0NByfagFXFiB02OX/KNY3Js3pGu08vlIRdyuCZ8w8ASJX6nIZfvUv0WVL7m7gRYzR9+WVQ==
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"
