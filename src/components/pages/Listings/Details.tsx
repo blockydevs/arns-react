@@ -17,7 +17,6 @@ import {
   Row,
   Schedule,
   Spinner,
-  calculateCurrentDutchListingPrice,
   formatDate,
   formatMillisecondsToDate,
   getDutchListingSchedule,
@@ -33,7 +32,8 @@ import {
 import eventEmitter from '@src/utils/events';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useCurrentDutchPrice } from '@src/hooks/useCurrentDutchPrice';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const BIDS_PER_PAGE = 5;
@@ -96,19 +96,21 @@ const Details = () => {
   }
 
   const listing = queryDetails.data;
+
+  const { data: liveDutchPrice } = useCurrentDutchPrice({
+    startingPrice: listing.startingPrice,
+    minimumPrice: listing.minimumPrice,
+    decreaseInterval: listing.decreaseInterval,
+    decreaseStep: listing.decreaseStep,
+    createdAt: new Date(listing.createdAt).getTime(),
+  });
   const marioPrice = (() => {
     if (listing.type === 'english') {
       return listing.highestBid ?? listing.startingPrice;
     }
 
     if (listing.type === 'dutch' && listing.status !== 'settled') {
-      return calculateCurrentDutchListingPrice({
-        startingPrice: listing.startingPrice,
-        minimumPrice: listing.minimumPrice,
-        decreaseInterval: listing.decreaseInterval,
-        decreaseStep: listing.decreaseStep,
-        createdAt: new Date(listing.createdAt).getTime(),
-      });
+      return liveDutchPrice ?? listing.startingPrice;
     }
 
     if (listing.status === 'settled') {
@@ -163,24 +165,25 @@ const Details = () => {
     window.open(`${AO_LINK_EXPLORER_URL}/${address}`, '_blank');
   };
 
-  const dutchPriceSchedule: Schedule[] =
-    listing.type === 'dutch'
-      ? getDutchListingSchedule({
-          startingPrice: listing.startingPrice,
-          minimumPrice: listing.minimumPrice,
-          decreaseInterval: listing.decreaseInterval,
-          decreaseStep: listing.decreaseStep,
-          createdAt: new Date(listing.createdAt).getTime(),
-          endedAt: new Date(
-            listing.status !== 'active' && listing.endedAt
-              ? listing.endedAt
-              : listing.expiresAt,
-          ).getTime(),
-        }).map((item) => ({
-          date: formatDate(item.date),
-          price: Number(marioToArio(item.price)),
-        }))
-      : [];
+const dutchPriceSchedule: Schedule[] = useMemo(() => {
+    if (listing.type !== 'dutch') return [];
+
+    return getDutchListingSchedule({
+      startingPrice: listing.startingPrice,
+      minimumPrice: listing.minimumPrice,
+      decreaseInterval: listing.decreaseInterval,
+      decreaseStep: listing.decreaseStep,
+      createdAt: new Date(listing.createdAt).getTime(),
+      endedAt: new Date(
+        listing.status !== 'active' && listing.endedAt
+          ? listing.endedAt
+          : listing.expiresAt,
+      ).getTime(),
+    }).map((item) => ({
+      date: formatDate(item.date),
+      price: Number(marioToArio(item.price)),
+    }));
+  }, [listing]); // Memoize based on listing data.
 
   return (
     <div className="max-w-6xl w-full px-6 mx-auto grid lg:grid-cols-5 gap-6 py-12">
