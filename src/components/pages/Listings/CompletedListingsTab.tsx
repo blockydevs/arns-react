@@ -1,13 +1,9 @@
-import {
-  fetchCompletedListings,
-  marioToArio,
-} from '@blockydevs/arns-marketplace-data';
+import { fetchCompletedListings } from '@blockydevs/arns-marketplace-data';
 import {
   Card,
   CompletedListingTable,
   type Domain,
   Pagination,
-  calculateCurrentDutchListingPrice,
   useCursorPagination,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState } from '@src/state';
@@ -15,6 +11,7 @@ import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   marketplaceQueryKeys,
 } from '@src/utils/constants';
+import { getCurrentListingArioPrice } from '@src/utils/marketplace';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,6 +23,7 @@ const CompletedListingsTab = () => {
   const pagination = useCursorPagination(PAGE_SIZE);
 
   const queryCompletedListings = useQuery({
+    refetchInterval: 15 * 1000,
     queryKey: marketplaceQueryKeys.listings.list('completed', {
       page: pagination.page,
       pageSize: pagination.pageSize,
@@ -44,29 +42,7 @@ const CompletedListingsTab = () => {
       return {
         ...data,
         items: data.items.map((item): Domain => {
-          const marioPrice = (() => {
-            if (item.type === 'english') {
-              return item.highestBid ?? item.startingPrice;
-            }
-
-            if (item.type === 'dutch' && item.status !== 'settled') {
-              return calculateCurrentDutchListingPrice({
-                startingPrice: item.startingPrice,
-                minimumPrice: item.minimumPrice,
-                decreaseInterval: item.decreaseInterval,
-                decreaseStep: item.decreaseStep,
-                createdAt: new Date(item.createdAt).getTime(),
-              });
-            }
-
-            if (item.status === 'settled') {
-              return item.finalPrice;
-            }
-
-            return item.price;
-          })();
-
-          const currentPrice = marioToArio(marioPrice);
+          const currentPrice = getCurrentListingArioPrice(item);
 
           return {
             name: item.name,
