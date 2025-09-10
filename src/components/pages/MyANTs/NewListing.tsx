@@ -20,7 +20,16 @@ import {
   marketplaceQueryKeys,
 } from '@src/utils/constants';
 import eventEmitter from '@src/utils/events';
-import { getMsFromDuration, mergeDateAndTime } from '@src/utils/marketplace';
+import {
+  DecreaseInterval,
+  Duration,
+  dutchDecreaseIntervalOptions,
+  dutchDurationOptions,
+  englishDurationOptions,
+  getMsFromDuration,
+  getMsFromInterval,
+  mergeDateAndTime,
+} from '@src/utils/marketplace';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addMilliseconds } from 'date-fns';
 import { useState } from 'react';
@@ -30,52 +39,21 @@ import { PriceScheduleModal } from './PriceScheduleModal';
 
 type Step = 1 | 2 | 3;
 
-type Duration = (
-  | typeof dutchDurationOptions
-  | typeof englishDurationOptions
-)[number]['value'];
-
-type Decrease = (typeof decreaseOptions)[number]['value'];
-
 interface FormState {
   type: string;
   price: string;
   minimumPrice: string;
   duration: Duration | undefined;
-  decrease: Decrease | undefined;
+  decrease: DecreaseInterval | undefined;
   hasExpirationTime: boolean;
   date: Date | undefined;
   time: string;
 }
 
-const oneHourMs = 60 * 60 * 1000;
-
 const typeOptions = [
   { label: 'Fixed price', value: 'fixed' },
   { label: 'English auction', value: 'english' },
   { label: 'Dutch auction', value: 'dutch' },
-] as const;
-
-const englishDurationOptions = [
-  { label: '1 day', value: '1d' },
-  { label: '7 days', value: '7d' },
-  { label: '30 days', value: '30d' },
-  { label: 'Custom date', value: 'custom' },
-] as const;
-
-const dutchDurationOptions = [
-  { label: '1 day', value: '1d' },
-  { label: '5 days', value: '5d' },
-  { label: '7 days', value: '7d' },
-  { label: '30 days', value: '30d' },
-  { label: 'Custom date', value: 'custom' },
-] as const;
-
-const decreaseOptions = [
-  { label: '4 hours', value: '4h' },
-  { label: '8 hours', value: '8h' },
-  { label: '12 hours', value: '12h' },
-  { label: '24 hours', value: '24h' },
 ] as const;
 
 function MyANTsNewListing() {
@@ -149,14 +127,7 @@ function MyANTsNewListing() {
                 throw new Error('decrease interval is missing');
               }
 
-              const decreaseIntervalMs = (() => {
-                if (form.decrease === '4h') return 4 * oneHourMs;
-                if (form.decrease === '8h') return 8 * oneHourMs;
-                if (form.decrease === '12h') return 12 * oneHourMs;
-                if (form.decrease === '24h') return 24 * oneHourMs;
-                throw new Error(`Unsupported decrease value ${form.decrease}`);
-              })();
-
+              const decreaseIntervalMs = getMsFromInterval(form.decrease);
               const durationMs = getMsFromDuration(form.duration);
 
               return {
@@ -203,7 +174,7 @@ function MyANTsNewListing() {
         : now.toISOString()
       : addMilliseconds(
           now,
-          getMsFromDuration(form.duration) ?? 0,
+          form.duration ? getMsFromDuration(form.duration) : 0,
         ).toISOString();
 
   const renderProperGoBackHeader = (step: Step) => {
@@ -309,9 +280,9 @@ function MyANTsNewListing() {
                     <Select
                       placeholder="Choose decrease interval"
                       className="w-full"
-                      options={decreaseOptions}
+                      options={dutchDecreaseIntervalOptions}
                       onValueChange={(value) =>
-                        updateForm('decrease', value as Decrease)
+                        updateForm('decrease', value as DecreaseInterval)
                       }
                     />
                     <PriceScheduleModal

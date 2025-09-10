@@ -1,4 +1,42 @@
+import { ListingDetails, marioToArio } from '@blockydevs/arns-marketplace-data';
+import { calculateCurrentDutchListingPrice } from '@blockydevs/arns-marketplace-ui';
+import { AO_LINK_EXPLORER_URL } from '@src/utils/constants';
+import { DetailsStatus } from 'node_modules/@blockydevs/arns-marketplace-ui/dist/components/templates/domains/details';
+
 const oneHourMs = 60 * 60 * 1000;
+
+export type Duration = (
+  | typeof dutchDurationOptions
+  | typeof englishDurationOptions
+)[number]['value'];
+
+export type DecreaseInterval =
+  (typeof dutchDecreaseIntervalOptions)[number]['value'];
+
+export const englishDurationOptions = [
+  { label: '1 hour', value: '1h' }, // FIXME: remove test code
+  { label: '1 day', value: '1d' },
+  { label: '7 days', value: '7d' },
+  { label: '30 days', value: '30d' },
+  { label: 'Custom date', value: 'custom' },
+] as const;
+
+export const dutchDurationOptions = [
+  { label: '1 hour', value: '1h' }, // FIXME: remove test code
+  { label: '1 day', value: '1d' },
+  { label: '5 days', value: '5d' },
+  { label: '7 days', value: '7d' },
+  { label: '30 days', value: '30d' },
+  { label: 'Custom date', value: 'custom' },
+] as const;
+
+export const dutchDecreaseIntervalOptions = [
+  { label: '5 minutes', value: '5m' }, // FIXME: remove test code
+  { label: '4 hours', value: '4h' },
+  { label: '8 hours', value: '8h' },
+  { label: '12 hours', value: '12h' },
+  { label: '24 hours', value: '24h' },
+] as const;
 
 export const mergeDateAndTime = (
   date: Date | undefined,
@@ -16,8 +54,11 @@ export const mergeDateAndTime = (
   return merged;
 };
 
-export const getMsFromInterval = (interval: string | undefined) => {
+export const getMsFromInterval = (interval: DecreaseInterval | undefined) => {
   switch (interval) {
+    case '5m': {
+      return 5 * 60 * 1000;
+    }
     case '4h': {
       return 4 * oneHourMs;
     }
@@ -31,17 +72,20 @@ export const getMsFromInterval = (interval: string | undefined) => {
       return 24 * oneHourMs;
     }
     default: {
-      return undefined;
+      throw new Error(`Unsupported decrease interval: ${interval}`);
     }
   }
 };
 
 export const getMsFromDuration = (
-  duration: string | undefined,
+  duration: Duration | undefined,
   date?: Date,
   time?: string,
 ) => {
   switch (duration) {
+    case '1h': {
+      return oneHourMs;
+    }
     case '1d': {
       return 1 * 24 * oneHourMs;
     }
@@ -61,7 +105,53 @@ export const getMsFromDuration = (
       return customDate.getTime() - Date.now();
     }
     default: {
-      return undefined;
+      throw new Error(`Unsupported duration: ${duration}`);
     }
   }
+};
+
+export const getStatusVariantFromListing = (
+  listing: ListingDetails,
+): DetailsStatus | undefined => {
+  switch (listing.status) {
+    case 'ready-for-settlement':
+    case 'settled':
+      return 'sold';
+    case 'expired':
+      return 'expired';
+    case 'cancelled':
+      return 'cancelled';
+    default:
+      return;
+  }
+};
+
+export const getCurrentListingArioPrice = (listing: ListingDetails) => {
+  const marioPrice = (() => {
+    if (listing.type === 'english') {
+      return listing.highestBid ?? listing.startingPrice;
+    }
+
+    if (listing.type === 'dutch' && listing.status !== 'settled') {
+      return calculateCurrentDutchListingPrice({
+        startingPrice: listing.startingPrice,
+        minimumPrice: listing.minimumPrice,
+        decreaseInterval: listing.decreaseInterval,
+        decreaseStep: listing.decreaseStep,
+        createdAt: new Date(listing.createdAt).getTime(),
+      });
+    }
+
+    if (listing.status === 'settled') {
+      return listing.finalPrice;
+    }
+
+    return listing.price;
+  })();
+
+  return marioToArio(marioPrice);
+};
+
+export const openAoLinkExplorer = (address: string) => {
+  window.open(`${AO_LINK_EXPLORER_URL}/${address}`, '_blank');
 };

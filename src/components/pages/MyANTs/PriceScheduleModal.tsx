@@ -11,12 +11,12 @@ import {
   formatDate,
   getDutchListingSchedule,
 } from '@blockydevs/arns-marketplace-ui';
-import { getMsFromInterval } from '@src/utils/marketplace';
+import { DecreaseInterval, getMsFromInterval } from '@src/utils/marketplace';
 
 interface Props {
   minimumPrice: number;
   startingPrice: number;
-  decreaseInterval: string | undefined;
+  decreaseInterval: DecreaseInterval | undefined;
   dateFrom: Date;
   dateTo: Date;
 }
@@ -28,15 +28,23 @@ export const PriceScheduleModal: React.FC<Props> = ({
   dateFrom,
   dateTo,
 }) => {
+  // generate estimated dutch price schedule
+  // real schedule will be different because of CreatedAt and EndedAt mismatch
   const dutchPriceSchedule: Schedule[] = (() => {
     try {
+      if (!decreaseInterval) return [];
       const decreaseIntervalMs = getMsFromInterval(decreaseInterval);
       if (!decreaseIntervalMs || decreaseIntervalMs === 0) return [];
 
       const totalIntervals = Math.floor(
         (dateTo.getTime() - dateFrom.getTime()) / decreaseIntervalMs,
       );
-      const step = (startingPrice - minimumPrice) / totalIntervals;
+
+      if (totalIntervals === 0) return [];
+      const decreaseStepArio = (startingPrice - minimumPrice) / totalIntervals;
+      const decreaseStepMario = Math.round(
+        Number(arioToMario(decreaseStepArio)),
+      ).toString();
 
       return getDutchListingSchedule({
         createdAt: dateFrom.getTime(),
@@ -44,12 +52,13 @@ export const PriceScheduleModal: React.FC<Props> = ({
         startingPrice: arioToMario(startingPrice),
         minimumPrice: arioToMario(minimumPrice),
         decreaseInterval: decreaseIntervalMs.toString(),
-        decreaseStep: arioToMario(step),
+        decreaseStep: decreaseStepMario,
       }).map((item) => ({
         date: formatDate(item.date),
         price: Number(Number(marioToArio(item.price)).toFixed(6)),
       }));
-    } catch {
+    } catch (err) {
+      console.warn('Error generating dutch price schedule', err);
       return [];
     }
   })();
@@ -64,7 +73,7 @@ export const PriceScheduleModal: React.FC<Props> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-2xl">
-            Price decrease schedule
+            Estimated price decrease schedule
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[480px] overflow-auto overflow-x-hidden">

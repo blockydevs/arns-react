@@ -35,7 +35,9 @@ const Home = React.lazy(() => import('./components/pages/Home/Home'));
 const Listings = React.lazy(
   () => import('./components/pages/Listings/Listings'),
 );
-const Details = React.lazy(() => import('./components/pages/Listings/Details'));
+const Details = React.lazy(
+  () => import('./components/pages/Listings/Details/Details'),
+);
 const Confirm = React.lazy(() => import('./components/pages/Listings/Confirm'));
 
 const ManageANT = React.lazy(

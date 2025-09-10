@@ -1,13 +1,9 @@
-import {
-  fetchActiveListings,
-  marioToArio,
-} from '@blockydevs/arns-marketplace-data';
+import { fetchActiveListings } from '@blockydevs/arns-marketplace-data';
 import {
   ActiveListingTable,
   Card,
   type Domain,
   Pagination,
-  calculateCurrentDutchListingPrice,
   useCursorPagination,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState } from '@src/state';
@@ -15,6 +11,7 @@ import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   marketplaceQueryKeys,
 } from '@src/utils/constants';
+import { getCurrentListingArioPrice } from '@src/utils/marketplace';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,6 +23,8 @@ const ActiveListingsTab = () => {
   const pagination = useCursorPagination(PAGE_SIZE);
 
   const queryActiveListings = useQuery({
+    refetchInterval: 15 * 1000,
+    structuralSharing: false,
     queryKey: marketplaceQueryKeys.listings.list('active', {
       page: pagination.page,
       pageSize: pagination.pageSize,
@@ -44,19 +43,7 @@ const ActiveListingsTab = () => {
       return {
         ...data,
         items: data.items.map((item): Domain => {
-          const marioPrice =
-            item.type === 'english'
-              ? item.highestBid ?? item.startingPrice
-              : item.type === 'dutch'
-              ? calculateCurrentDutchListingPrice({
-                  startingPrice: item.startingPrice,
-                  minimumPrice: item.minimumPrice,
-                  decreaseInterval: item.decreaseInterval,
-                  decreaseStep: item.decreaseStep,
-                  createdAt: new Date(item.createdAt).getTime(),
-                })
-              : item.price;
-          const currentPrice = marioToArio(marioPrice);
+          const currentPrice = getCurrentListingArioPrice(item);
 
           return {
             name: item.name,
@@ -80,7 +67,7 @@ const ActiveListingsTab = () => {
 
   const { totalItems } = queryActiveListings.data ?? {};
   const totalPages = pagination.getTotalPages(totalItems);
-
+  console.log(queryActiveListings.data?.items ?? []);
   return (
     <Card className="flex flex-col gap-8">
       <ActiveListingTable

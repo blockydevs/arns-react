@@ -18,12 +18,11 @@ import { useNavigate } from 'react-router-dom';
 
 const MyANTs = () => {
   const navigate = useNavigate();
-
   const [{ aoClient, aoNetwork }] = useGlobalState();
   const [{ walletAddress }] = useWalletState();
-
   const queryMyANTs = useQuery({
     enabled: !!walletAddress,
+    refetchInterval: 15 * 1000,
     queryKey: marketplaceQueryKeys.myANTs.list(walletAddress?.toString()),
     queryFn: () => {
       if (!walletAddress) throw new Error('No wallet address');
