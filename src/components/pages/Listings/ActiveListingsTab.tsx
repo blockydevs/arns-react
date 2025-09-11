@@ -67,7 +67,7 @@ const ActiveListingsTab = () => {
 
   const { totalItems } = queryActiveListings.data ?? {};
   const totalPages = pagination.getTotalPages(totalItems);
-  console.log(queryActiveListings.data?.items ?? []);
+
   return (
     <Card className="flex flex-col gap-8">
       <ActiveListingTable
