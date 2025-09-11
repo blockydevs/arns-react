@@ -99,7 +99,12 @@ const Confirm = () => {
     },
   });
 
-  if (mutationBuyListing.isSuccess) {
+  const isMutationPending =
+    mutationBidListing.isPending || mutationBuyListing.isPending;
+  const isMutationSuccess =
+    mutationBidListing.isSuccess || mutationBuyListing.isSuccess;
+
+  if (isMutationSuccess) {
     return (
       <>
         <GoBackHeader
@@ -194,10 +199,7 @@ const Confirm = () => {
               variant="primary"
               size="small"
               disabled={
-                !walletAddress ||
-                mutationBidListing.isPending ||
-                mutationBuyListing.isPending ||
-                mutationBuyListing.isSuccess
+                !walletAddress || isMutationPending || isMutationSuccess
               }
               onClick={() => {
                 const operation = type === 'english' ? 'bid' : 'buy';
@@ -240,7 +242,7 @@ const Confirm = () => {
             </Button>
           </div>
         </Card>
-        {(mutationBuyListing.isPending || mutationBidListing.isPending) && (
+        {isMutationPending && (
           <div className="text-white flex mt-6 gap-3 items-center p-6 border ar:border-neutral-500 rounded-lg">
             <Spinner className="size-5" />
             <Paragraph className="text-xl">
