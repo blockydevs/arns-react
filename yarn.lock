@@ -111,10 +111,10 @@
     winston "^3.13.0"
     zod "^3.23.8"
 
-"@ar.io/sdk@^3.18.3":
-  version "3.18.3"
-  resolved "https://registry.yarnpkg.com/@ar.io/sdk/-/sdk-3.18.3.tgz#5a19b386db0a685aa3b07ef43e06a44d714e40d4"
-  integrity sha512-RA2wXmSbKkn5uRgTwpA0j+FrkEWs7b21ZPK1AmFm24qKFCtkaXURC5V5xtBsNveh+0vh/O0xxNA2WTsmTO/3yA==
+"@ar.io/sdk@^3.19.0-alpha.10":
+  version "3.19.0"
+  resolved "https://registry.yarnpkg.com/@ar.io/sdk/-/sdk-3.19.0.tgz#ed31a1a55d435356fda48ec7e2e0ebc81ddd4c53"
+  integrity sha512-nTmPzxlS533QQMqXKe/MxE9jBWaDutFTfSiQ1nCBbjFqDlkNaotZrGkFYtpcX+T7ZEWP+nvXA8HOYrfCGlIFHw==
   dependencies:
     "@dha-team/arbundles" "^1.0.1"
     "@permaweb/aoconnect" "0.0.68"
@@ -1511,10 +1511,10 @@
   resolved "http://localhost:4873/@blockydevs/arns-marketplace-data/-/arns-marketplace-data-0.1.78.tgz#fc8e2501f10a86e31d9a9452ae7d4570f6dae52f"
   integrity sha512-2OBPdiC0ZnQ8nwrWzwRR6StWEd2xFtikL0CwoYGVdVUQ6EnJ248zAWJs9x72kihKSQ1G0CVwNrlKc3WeT+Bdqg==
 
-"@blockydevs/arns-marketplace-ui@^0.1.101":
-  version "0.1.101"
-  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.101.tgz#9c998208e1c9d16d49e22d5ede261eb00c4a0400"
-  integrity sha512-nVMP3C42qmy31j6W9ksdBpNMsBAOXKdQF1pYunANA7ApVP5M5uhvM70/yWU0lQ2Dmy/KAEUY8aqFsA2Z3tdNUQ==
+"@blockydevs/arns-marketplace-ui@^0.1.102":
+  version "0.1.102"
+  resolved "http://localhost:4873/@blockydevs/arns-marketplace-ui/-/arns-marketplace-ui-0.1.102.tgz#8c15c7477a72afb1384131efccbae6e4a017d3b3"
+  integrity sha512-7M4++Eycz4e92kq0O/rje6s09ew5OnbxiOlxmN5PqQ8cfNV5uMFG0QsGyxDbw16jxteiloO9PFrCXNJOMUiofA==
 
 "@bufbuild/protobuf@^2.2.3":
   version "2.2.5"
