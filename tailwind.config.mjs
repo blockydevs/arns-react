@@ -3,9 +3,6 @@
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'selector', // or 'media' or 'class'
-  // corePlugins: {
-  //   preflight: false,
-  // },
   theme: {
     extend: {
       backgroundImage: {

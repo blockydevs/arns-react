@@ -10,9 +10,6 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   base: '',
   esbuild: false,
-  server: {
-    allowedHosts: ['living-lark-publicly.ngrok-free.app'],
-  },
   build: {
     sourcemap: true,
     minify: true,

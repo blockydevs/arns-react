@@ -9,18 +9,16 @@ import {
   Spinner,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
+import eventEmitter from '@src/utils/events';
 import {
   BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   BLOCKYDEVS_SWAP_TOKEN_ID,
   marketplaceQueryKeys,
-} from '@src/utils/constants';
-import eventEmitter from '@src/utils/events';
+} from '@src/utils/marketplace';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 const Confirm = () => {
-  const [success, setSuccess] = useState(false);
   const { id: listingId } = useParams();
   const searchParams = useSearchParams();
   const navigate = useNavigate();
@@ -101,7 +99,7 @@ const Confirm = () => {
     },
   });
 
-  if (success) {
+  if (mutationBuyListing.isSuccess) {
     return (
       <>
         <GoBackHeader
@@ -198,7 +196,8 @@ const Confirm = () => {
               disabled={
                 !walletAddress ||
                 mutationBidListing.isPending ||
-                mutationBuyListing.isPending
+                mutationBuyListing.isPending ||
+                mutationBuyListing.isSuccess
               }
               onClick={() => {
                 const operation = type === 'english' ? 'bid' : 'buy';
@@ -220,7 +219,7 @@ const Confirm = () => {
                     },
                     onSuccess: async (data) => {
                       console.log(`${operation} success`, { data });
-                      await Promise.all([
+                      void Promise.allSettled([
                         queryClient.refetchQueries({
                           queryKey: [marketplaceQueryKeys.listings.all],
                         }),
@@ -228,7 +227,6 @@ const Confirm = () => {
                           queryKey: [marketplaceQueryKeys.myANTs.all],
                         }),
                       ]);
-                      setSuccess(true);
                     },
                   },
                 );

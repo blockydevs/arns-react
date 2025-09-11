@@ -259,38 +259,3 @@ export const currencyLabels: Partial<Record<TokenType, string>> = {
 
 export const LINK_HOW_ARE_CONVERSIONS_DETERMINED =
   'https://help.ardrive.io/hc/en-us/articles/17043397992731';
-
-export const BLOCKYDEVS_ACTIVITY_PROCESS_ID =
-  'Jj8LhgFLmCE_BAMys_zoTDRx8eYXsSl3-BMBIov8n9E';
-export const BLOCKYDEVS_MARKETPLACE_PROCESS_ID =
-  'a3jqBgXGAqefY4EHqkMwXhkBSFxZfzVdLU1oMUTQ-1M';
-export const BLOCKYDEVS_SWAP_TOKEN_ID =
-  'agYcCFJtrMG6cqMuZfskIkFTGvUPddICmtQSBIoPdiA';
-export const AO_LINK_EXPLORER_URL = 'https://ao.link/#/entity';
-export const marketplaceQueryKeys = {
-  myANTs: {
-    all: 'my-ants',
-    list: (walletAddress: string | undefined) => [
-      marketplaceQueryKeys.myANTs.all,
-      walletAddress,
-    ],
-    item: (walletAddress: string | undefined, antId: string) => [
-      marketplaceQueryKeys.myANTs.all,
-      walletAddress,
-      antId,
-    ],
-  },
-  listings: {
-    all: 'listings',
-    list: (type: 'active' | 'completed', options?: Record<string, unknown>) => [
-      marketplaceQueryKeys.listings.all,
-      type,
-      options,
-    ],
-    item: (id: string | undefined) => [
-      marketplaceQueryKeys.listings.all,
-      'details',
-      id,
-    ],
-  },
-};

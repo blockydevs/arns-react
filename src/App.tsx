@@ -396,15 +396,6 @@ function App() {
                 <MyANTs />
               </Suspense>
             }
-            // handle={{
-            //   crumbs: () => [
-            //     { name: 'Home', route: '/' },
-            //     {
-            //       name: 'My ANTs',
-            //       route: '/my-ants',
-            //     },
-            //   ],
-            // }}
           />
           <Route
             path="/my-ants/new-listing/:antProcessId"

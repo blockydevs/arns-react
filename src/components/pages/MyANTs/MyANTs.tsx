@@ -12,7 +12,7 @@ import { useGlobalState, useWalletState } from '@src/state';
 import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   marketplaceQueryKeys,
-} from '@src/utils/constants';
+} from '@src/utils/marketplace';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 

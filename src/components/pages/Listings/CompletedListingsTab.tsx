@@ -9,9 +9,9 @@ import {
 import { useGlobalState } from '@src/state';
 import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+  getCurrentListingArioPrice,
   marketplaceQueryKeys,
-} from '@src/utils/constants';
-import { getCurrentListingArioPrice } from '@src/utils/marketplace';
+} from '@src/utils/marketplace';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
