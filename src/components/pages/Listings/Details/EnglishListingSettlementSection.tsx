@@ -5,11 +5,11 @@ import {
 } from '@blockydevs/arns-marketplace-data';
 import { Button } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
+import eventEmitter from '@src/utils/events';
 import {
   BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   marketplaceQueryKeys,
-} from '@src/utils/constants';
-import eventEmitter from '@src/utils/events';
+} from '@src/utils/marketplace';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Props {
@@ -48,7 +48,9 @@ const EnglishListingSettlementSection = ({ listing }: Props) => {
     <Button
       variant="primary"
       className="w-full"
-      disabled={mutationSettleListing.isPending}
+      disabled={
+        mutationSettleListing.isPending || mutationSettleListing.isSuccess
+      }
       onClick={() => {
         mutationSettleListing.mutate(
           {
@@ -63,7 +65,7 @@ const EnglishListingSettlementSection = ({ listing }: Props) => {
             },
             onSuccess: async (data) => {
               console.log(`settlement success`, { data });
-              await Promise.all([
+              void Promise.allSettled([
                 queryClient.refetchQueries({
                   queryKey: [marketplaceQueryKeys.listings.all],
                 }),
@@ -76,7 +78,11 @@ const EnglishListingSettlementSection = ({ listing }: Props) => {
         );
       }}
     >
-      {mutationSettleListing.isPending ? 'Settling...' : 'Settle now (You won)'}
+      {mutationSettleListing.isPending
+        ? 'Settling...'
+        : mutationSettleListing.isSuccess
+        ? 'Settled successfully'
+        : 'Settle now (You won)'}
     </Button>
   );
 };

@@ -13,14 +13,12 @@ import {
   formatDate,
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
+import eventEmitter from '@src/utils/events';
+import '@src/utils/marketplace';
 import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   BLOCKYDEVS_SWAP_TOKEN_ID,
-  marketplaceQueryKeys,
-} from '@src/utils/constants';
-import eventEmitter from '@src/utils/events';
-import {
   DecreaseInterval,
   Duration,
   dutchDecreaseIntervalOptions,
@@ -28,6 +26,7 @@ import {
   englishDurationOptions,
   getMsFromDuration,
   getMsFromInterval,
+  marketplaceQueryKeys,
   mergeDateAndTime,
 } from '@src/utils/marketplace';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -420,7 +419,7 @@ function MyANTsNewListing() {
                 <Button
                   variant="primary"
                   size="small"
-                  disabled={mutation.isPending}
+                  disabled={mutation.isPending || mutation.isSuccess}
                   onClick={() => {
                     if (step === 1) setStep(2);
                     else {
@@ -434,7 +433,8 @@ function MyANTsNewListing() {
                         },
                         onSuccess: async (data) => {
                           console.log('listing created', { data });
-                          await Promise.all([
+                          setStep(3);
+                          void Promise.allSettled([
                             queryClient.refetchQueries({
                               queryKey: [marketplaceQueryKeys.listings.all],
                             }),
@@ -442,7 +442,6 @@ function MyANTsNewListing() {
                               queryKey: [marketplaceQueryKeys.myANTs.all],
                             }),
                           ]);
-                          setStep(3);
                         },
                       });
                     }
@@ -452,6 +451,8 @@ function MyANTsNewListing() {
                     ? 'Next'
                     : mutation.isPending
                     ? 'Confirming listing...'
+                    : mutation.isSuccess
+                    ? 'Listing created successfully'
                     : 'Confirm listing'}
                 </Button>
               </>

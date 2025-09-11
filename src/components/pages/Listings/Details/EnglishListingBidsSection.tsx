@@ -9,7 +9,7 @@ import {
   Paragraph,
   formatDate,
 } from '@blockydevs/arns-marketplace-ui';
-import { AO_LINK_EXPLORER_URL } from '@src/utils/constants';
+import { AO_LINK_EXPLORER_URL } from '@src/utils/marketplace';
 import { useState } from 'react';
 
 interface Props {

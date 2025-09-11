@@ -1,7 +1,5 @@
 import { ListingDetails, marioToArio } from '@blockydevs/arns-marketplace-data';
 import { calculateCurrentDutchListingPrice } from '@blockydevs/arns-marketplace-ui';
-import { AO_LINK_EXPLORER_URL } from '@src/utils/constants';
-import { DetailsStatus } from 'node_modules/@blockydevs/arns-marketplace-ui/dist/components/templates/domains/details';
 
 const oneHourMs = 60 * 60 * 1000;
 
@@ -110,10 +108,10 @@ export const getMsFromDuration = (
   }
 };
 
-export const getStatusVariantFromListing = (
-  listing: ListingDetails,
-): DetailsStatus | undefined => {
+export const getStatusVariantFromListing = (listing: ListingDetails) => {
   switch (listing.status) {
+    case 'processing':
+      return 'processing';
     case 'ready-for-settlement':
     case 'settled':
       return 'sold';
@@ -154,4 +152,39 @@ export const getCurrentListingArioPrice = (listing: ListingDetails) => {
 
 export const openAoLinkExplorer = (address: string) => {
   window.open(`${AO_LINK_EXPLORER_URL}/${address}`, '_blank');
+};
+
+export const BLOCKYDEVS_ACTIVITY_PROCESS_ID =
+  'Jj8LhgFLmCE_BAMys_zoTDRx8eYXsSl3-BMBIov8n9E';
+export const BLOCKYDEVS_MARKETPLACE_PROCESS_ID =
+  'a3jqBgXGAqefY4EHqkMwXhkBSFxZfzVdLU1oMUTQ-1M';
+export const BLOCKYDEVS_SWAP_TOKEN_ID =
+  'agYcCFJtrMG6cqMuZfskIkFTGvUPddICmtQSBIoPdiA';
+export const AO_LINK_EXPLORER_URL = 'https://ao.link/#/entity';
+export const marketplaceQueryKeys = {
+  myANTs: {
+    all: 'my-ants',
+    list: (walletAddress: string | undefined) => [
+      marketplaceQueryKeys.myANTs.all,
+      walletAddress,
+    ],
+    item: (walletAddress: string | undefined, antId: string) => [
+      marketplaceQueryKeys.myANTs.all,
+      walletAddress,
+      antId,
+    ],
+  },
+  listings: {
+    all: 'listings',
+    list: (type: 'active' | 'completed', options?: Record<string, unknown>) => [
+      marketplaceQueryKeys.listings.all,
+      type,
+      options,
+    ],
+    item: (id: string | undefined) => [
+      marketplaceQueryKeys.listings.all,
+      'details',
+      id,
+    ],
+  },
 };

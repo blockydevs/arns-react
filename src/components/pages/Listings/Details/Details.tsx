@@ -8,11 +8,9 @@ import ListingPriceSection from '@src/components/pages/Listings/Details/ListingP
 import { useGlobalState, useWalletState } from '@src/state';
 import {
   BLOCKYDEVS_ACTIVITY_PROCESS_ID,
-  marketplaceQueryKeys,
-} from '@src/utils/constants';
-import {
   getCurrentListingArioPrice,
   getStatusVariantFromListing,
+  marketplaceQueryKeys,
 } from '@src/utils/marketplace';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';

@@ -5,11 +5,11 @@ import {
 } from '@blockydevs/arns-marketplace-data';
 import { Button } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
+import eventEmitter from '@src/utils/events';
 import {
   BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   marketplaceQueryKeys,
-} from '@src/utils/constants';
-import eventEmitter from '@src/utils/events';
+} from '@src/utils/marketplace';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Props {
@@ -49,7 +49,9 @@ const ListingExpiredSection = ({ listing }: Props) => {
     <Button
       variant="primary"
       className="px-0"
-      disabled={mutationCancelListing.isPending}
+      disabled={
+        mutationCancelListing.isPending || mutationCancelListing.isSuccess
+      }
       onClick={() => {
         mutationCancelListing.mutate(
           {
@@ -64,7 +66,7 @@ const ListingExpiredSection = ({ listing }: Props) => {
             },
             onSuccess: async (data) => {
               console.log(`cancel success`, { data });
-              await Promise.all([
+              void Promise.allSettled([
                 queryClient.refetchQueries({
                   queryKey: [marketplaceQueryKeys.listings.all],
                 }),
@@ -77,7 +79,11 @@ const ListingExpiredSection = ({ listing }: Props) => {
         );
       }}
     >
-      {mutationCancelListing.isPending ? 'Processing...' : 'Get your ANT back'}
+      {mutationCancelListing.isPending
+        ? 'Processing...'
+        : mutationCancelListing.isSuccess
+        ? 'Return submitted'
+        : 'Get your ANT back'}
     </Button>
   );
 };
