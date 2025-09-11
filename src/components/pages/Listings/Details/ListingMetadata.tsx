@@ -28,9 +28,7 @@ const ListingMetadata = ({ listing }: Props) => {
           decreaseStep: listing.decreaseStep,
           createdAt: new Date(listing.createdAt).getTime(),
           endedAt: new Date(
-            listing.status !== 'active' && listing.endedAt
-              ? listing.endedAt
-              : listing.expiresAt,
+            'endedAt' in listing ? listing.endedAt : listing.expiresAt,
           ).getTime(),
         }).map((item) => ({
           date: formatDate(item.date),

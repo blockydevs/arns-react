@@ -1,4 +1,3 @@
-import { ARIO_TESTNET_PROCESS_ID } from '@ar.io/sdk';
 import { fetchMyANTs, marioToArio } from '@blockydevs/arns-marketplace-data';
 import {
   Card,
@@ -18,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 
 const MyANTs = () => {
   const navigate = useNavigate();
-  const [{ aoClient, aoNetwork }] = useGlobalState();
+  const [{ aoClient, aoNetwork, arioProcessId }] = useGlobalState();
   const [{ walletAddress }] = useWalletState();
   const queryMyANTs = useQuery({
     enabled: !!walletAddress,
@@ -30,7 +29,7 @@ const MyANTs = () => {
       return fetchMyANTs({
         walletAddress: walletAddress.toString(),
         ao: aoClient,
-        networkProcessId: ARIO_TESTNET_PROCESS_ID,
+        networkProcessId: arioProcessId,
         activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
         graphqlUrl: aoNetwork.ANT.GRAPHQL_URL,
       });
