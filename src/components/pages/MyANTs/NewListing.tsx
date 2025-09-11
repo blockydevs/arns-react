@@ -104,6 +104,7 @@ function MyANTsNewListing() {
         activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
         marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
+        waitForConfirmation: false,
         config: (() => {
           switch (form.type) {
             case 'fixed': {
