@@ -20,20 +20,22 @@ const ListingBuyerSection = ({ buyerAddress }: Props) => {
       <Paragraph className="text-xl text-[var(--ar-color-neutral-400)] mb-2">
         Buyer
       </Paragraph>
-      <Button
-        variant="link"
-        className="px-0 gap-1"
-        icon={<ExternalLink width={16} height={16} />}
-        iconPlacement="right"
-        onClick={() => {
-          openAoLinkExplorer(buyerAddress);
-        }}
-      >
-        {shortenAddress(buyerAddress)}
-        <span className="text-white font-normal text-[var(--ar-color-neutral-400)]">
+      <div className="flex gap-2 items-center">
+        <Button
+          variant="link"
+          className="px-0 gap-1"
+          icon={<ExternalLink width={16} height={16} />}
+          iconPlacement="right"
+          onClick={() => {
+            openAoLinkExplorer(buyerAddress);
+          }}
+        >
+          {shortenAddress(buyerAddress)}
+        </Button>
+        <span className="text-white text-sm font-normal text-[var(--ar-color-neutral-400)]">
           {buyerAddress === walletAddress?.toString() && '(Your wallet)'}
         </span>
-      </Button>
+      </div>
     </Card>
   );
 };
