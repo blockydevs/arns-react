@@ -15,7 +15,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 const CompletedListingsTab = () => {
   const navigate = useNavigate();
