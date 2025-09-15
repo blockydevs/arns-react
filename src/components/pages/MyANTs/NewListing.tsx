@@ -98,6 +98,15 @@ function MyANTsNewListing() {
         throw new Error('No type specified');
       }
 
+      const selectedDateTime =
+        form.hasExpirationTime || form.duration === 'custom'
+          ? mergeDateAndTime(form.date, form.time)
+          : null;
+
+      if (selectedDateTime && selectedDateTime.getTime() < Date.now()) {
+        throw new Error('Invalid date: cannot be in the past');
+      }
+
       return await createListing({
         ao: antAoClient,
         antProcessId,
