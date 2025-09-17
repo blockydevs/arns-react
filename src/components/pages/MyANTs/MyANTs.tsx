@@ -78,6 +78,7 @@ const MyANTs = () => {
                 value: domain.listing?.type,
               }
             : undefined,
+          ownershipType: domain.type,
           status: domain.listing ? 'listed' : 'idle',
         };
       });

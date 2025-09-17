@@ -48,6 +48,7 @@ const CompletedListingsTab = () => {
             name: item.name,
             createdAt: item.createdAt,
             endDate: item.endedAt,
+            ownershipType: item.ownershipType,
             price: {
               type: item.type === 'english' ? 'bid' : 'buyout',
               symbol: 'ARIO',
