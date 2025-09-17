@@ -48,6 +48,7 @@ const ActiveListingsTab = () => {
           return {
             name: item.name,
             endDate: item.expiresAt ?? undefined,
+            ownershipType: item.ownershipType,
             price: {
               type: item.type === 'english' ? 'bid' : 'buyout',
               symbol: 'ARIO',
