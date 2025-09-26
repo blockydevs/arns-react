@@ -24,6 +24,7 @@ const CompletedListingsTab = () => {
 
   const queryCompletedListings = useQuery({
     refetchInterval: 15 * 1000,
+    enabled: Boolean(aoClient),
     queryKey: marketplaceQueryKeys.listings.list('completed', {
       page: pagination.page,
       pageSize: pagination.pageSize,
