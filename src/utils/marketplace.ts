@@ -42,7 +42,7 @@ export const mergeDateAndTime = (
 ): Date | undefined => {
   if (!date) return undefined;
 
-  const [hours, minutes, seconds] = time.split(':').map(Number);
+  const [hours, minutes, seconds = 0] = time.split(':').map(Number);
   const merged = new Date(date);
 
   merged.setHours(hours);

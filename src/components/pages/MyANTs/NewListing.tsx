@@ -136,6 +136,10 @@ function MyANTsNewListing() {
                 throw new Error('decrease interval is missing');
               }
 
+              if (!form.duration) {
+                throw new Error('duration is missing');
+              }
+
               const decreaseIntervalMs = getMsFromInterval(form.decrease);
               const durationMs = getMsFromDuration(
                 form.duration,
@@ -152,6 +156,10 @@ function MyANTsNewListing() {
               };
             }
             case 'english': {
+              if (!form.duration) {
+                throw new Error('duration is missing');
+              }
+
               const durationMs = getMsFromDuration(
                 form.duration,
                 form.date,
