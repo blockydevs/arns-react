@@ -151,7 +151,11 @@ export const getCurrentListingArioPrice = (listing: ListingDetails) => {
 };
 
 export const openAoLinkExplorer = (address: string) => {
-  window.open(`${AO_LINK_EXPLORER_URL}/${address}`, '_blank');
+  window.open(
+    `${AO_LINK_EXPLORER_URL}/${address}`,
+    '_blank',
+    'noopener,noreferrer',
+  );
 };
 
 export const BLOCKYDEVS_ACTIVITY_PROCESS_ID =

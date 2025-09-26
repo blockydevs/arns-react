@@ -66,7 +66,9 @@ const MyANTs = () => {
                           decreaseInterval: item.decreaseInterval,
                           decreaseStep: item.decreaseStep,
                           createdAt: new Date(item.createdAt).getTime(),
-                          endedAt: new Date(item.expiresAt).getTime(),
+                          endedAt: item.expiresAt
+                            ? new Date(item.expiresAt).getTime()
+                            : undefined,
                         })
                       : item.price;
                   return Number(marioToArio(marioPrice));

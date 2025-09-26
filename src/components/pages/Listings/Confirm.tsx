@@ -162,7 +162,7 @@ const Confirm = () => {
             <Button
               variant="secondary"
               className="w-full"
-              onClick={() => navigate(`/listing`)}
+              onClick={() => navigate(`/listings`)}
             >
               Go to marketplace
             </Button>

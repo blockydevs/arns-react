@@ -137,14 +137,18 @@ function MyANTsNewListing() {
               }
 
               const decreaseIntervalMs = getMsFromInterval(form.decrease);
-              const durationMs = getMsFromDuration(form.duration);
+              const durationMs = getMsFromDuration(
+                form.duration,
+                form.date,
+                form.time,
+              );
 
               return {
                 type: form.type,
                 price: form.price.toString(),
                 minimumPrice: form.minimumPrice.toString(),
                 decreaseInterval: decreaseIntervalMs.toString(),
-                ...(durationMs && { expiresAt: now.getTime() + durationMs }),
+                ...(durationMs && { expiresAt: Date.now() + durationMs }),
               };
             }
             case 'english': {
