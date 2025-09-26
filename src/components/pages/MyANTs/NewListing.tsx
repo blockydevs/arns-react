@@ -159,12 +159,6 @@ function MyANTsNewListing() {
               if (!form.duration) {
                 throw new Error('duration is missing');
               }
-              if (form.duration === 'custom' && (!form.date || !form.time)) {
-                throw new Error('date/time is missing for custom duration');
-              }
-              if (Number(form.minimumPrice) > Number(form.price)) {
-                throw new Error('minimum price cannot exceed starting price');
-              }
 
               const durationMs = getMsFromDuration(
                 form.duration,
