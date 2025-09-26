@@ -40,7 +40,7 @@ export const PriceScheduleModal: React.FC<Props> = ({
       const totalIntervals = Math.floor(msSpan / decreaseIntervalMs);
       if (totalIntervals <= 0) return [];
       const priceDelta = startingPrice - minimumPrice;
-      if (priceDelta < 0) return [];
+      if (priceDelta <= 0) return [];
       const decreaseStepArio = priceDelta / totalIntervals;
 
       const decreaseStepMario = Math.round(

@@ -147,6 +147,9 @@ export const getCurrentListingArioPrice = (listing: ListingDetails) => {
     return listing.price;
   })();
 
+  if (marioPrice == null) {
+    return 0;
+  }
   return marioToArio(marioPrice);
 };
 
