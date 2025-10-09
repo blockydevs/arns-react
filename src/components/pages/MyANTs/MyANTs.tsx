@@ -9,7 +9,7 @@ import {
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState, useWalletState } from '@src/state';
 import {
-  BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+  BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   marketplaceQueryKeys,
 } from '@src/utils/marketplace';
 import { useQuery } from '@tanstack/react-query';
@@ -30,7 +30,7 @@ const MyANTs = () => {
         walletAddress: walletAddress.toString(),
         ao: aoClient,
         networkProcessId: arioProcessId,
-        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        activityProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         graphqlUrl: aoNetwork.ANT.GRAPHQL_URL,
       });
     },

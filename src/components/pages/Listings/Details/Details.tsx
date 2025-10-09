@@ -7,7 +7,7 @@ import ListingMetadata from '@src/components/pages/Listings/Details/ListingMetad
 import ListingPriceSection from '@src/components/pages/Listings/Details/ListingPriceSection';
 import { useGlobalState, useWalletState } from '@src/state';
 import {
-  BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+  BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   getCurrentListingArioPrice,
   getStatusVariantFromListing,
   marketplaceQueryKeys,
@@ -28,7 +28,7 @@ const Details = () => {
 
       return fetchListingDetails({
         ao: aoClient,
-        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        activityProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         orderId: id,
       });
     },

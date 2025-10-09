@@ -8,7 +8,7 @@ import {
 } from '@blockydevs/arns-marketplace-ui';
 import { useGlobalState } from '@src/state';
 import {
-  BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+  BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   getCurrentListingArioPrice,
   marketplaceQueryKeys,
 } from '@src/utils/marketplace';
@@ -33,7 +33,7 @@ const CompletedListingsTab = () => {
     queryFn: () => {
       return fetchCompletedListings({
         ao: aoClient,
-        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        activityProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         limit: pagination.pageSize,
         cursor: pagination.cursor,
       });

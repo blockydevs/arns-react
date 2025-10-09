@@ -12,6 +12,8 @@ const DutchListingPriceSection = ({ listing }: Props) => {
   const navigate = useNavigate();
   const [{ walletAddress }] = useWalletState();
 
+  const label = listing.ownershipType === 'lease' ? 'Lease now' : 'Buy now';
+
   const navigateToConfirmPurchase = () => {
     const orderId = listing.orderId;
     const name = listing.name;
@@ -38,7 +40,7 @@ const DutchListingPriceSection = ({ listing }: Props) => {
             navigateToConfirmPurchase();
           }}
         >
-          {!walletAddress ? 'No wallet' : 'Buy now'}
+          {!walletAddress ? 'No wallet' : label}
         </Button>
       )}
     </>

@@ -12,6 +12,8 @@ const FixedListingPriceSection = ({ listing }: Props) => {
   const navigate = useNavigate();
   const [{ walletAddress }] = useWalletState();
 
+  const label = listing.ownershipType === 'lease' ? 'Lease now' : 'Buy now';
+
   const navigateToConfirmPurchase = () => {
     const orderId = listing.orderId;
     const name = listing.name;
@@ -36,7 +38,7 @@ const FixedListingPriceSection = ({ listing }: Props) => {
         navigateToConfirmPurchase();
       }}
     >
-      {!walletAddress ? 'No wallet' : 'Buy now'}
+      {!walletAddress ? 'No wallet' : label}
     </Button>
   );
 };

@@ -7,7 +7,7 @@ import {
 import { useGlobalState } from '@src/state';
 import { lowerCaseDomain } from '@src/utils';
 import eventEmitter from '@src/utils/events';
-import { BLOCKYDEVS_ACTIVITY_PROCESS_ID } from '@src/utils/marketplace';
+import { BLOCKYDEVS_MARKETPLACE_PROCESS_ID } from '@src/utils/marketplace';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +22,7 @@ const SearchListingByName = () => {
         name: lowerCaseDomain(name),
         ao: aoClient,
         networkProcessId: arioProcessId,
-        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        activityProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
       });
     },
     onError: (error) => {

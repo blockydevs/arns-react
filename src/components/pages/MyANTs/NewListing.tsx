@@ -16,7 +16,6 @@ import { useGlobalState, useWalletState } from '@src/state';
 import eventEmitter from '@src/utils/events';
 import '@src/utils/marketplace';
 import {
-  BLOCKYDEVS_ACTIVITY_PROCESS_ID,
   BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
   BLOCKYDEVS_SWAP_TOKEN_ID,
   DecreaseInterval,
@@ -110,7 +109,7 @@ function MyANTsNewListing() {
       return await createListing({
         ao: antAoClient,
         antProcessId,
-        activityProcessId: BLOCKYDEVS_ACTIVITY_PROCESS_ID,
+        activityProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         marketplaceProcessId: BLOCKYDEVS_MARKETPLACE_PROCESS_ID,
         swapTokenId: BLOCKYDEVS_SWAP_TOKEN_ID,
         waitForConfirmation: false,
